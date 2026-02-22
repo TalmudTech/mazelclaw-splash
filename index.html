@@ -148,6 +148,34 @@
         </div>
       </section>
 
+      <section class="container press-grid">
+        <article class="card press-card">
+          <p class="press-label">Featured In</p>
+          <h3>Independent builders are using MazelClaw-like stacks as daily operators.</h3>
+          <p>Practical automation from chat is becoming the default workflow for lean teams.</p>
+        </article>
+        <article class="card press-card">
+          <p class="press-label">Philosophy</p>
+          <h3>Your assistant should run where your data lives.</h3>
+          <p>Open architecture, direct tool execution, and composable skills over black-box SaaS.</p>
+        </article>
+      </section>
+
+      <section class="container links-grid">
+        <a class="card link-card" href="https://github.com/TalmudTech/mazelclaw" target="_blank" rel="noopener">
+          <h3>Source Code</h3>
+          <p>Track main development and changes in the MazelClaw repository.</p>
+        </a>
+        <a class="card link-card" href="https://docs.openclaw.ai" target="_blank" rel="noopener">
+          <h3>Documentation</h3>
+          <p>Reference docs for setup, architecture, and advanced workflows.</p>
+        </a>
+        <a class="card link-card" href="https://discord.com/invite/clawd" target="_blank" rel="noopener">
+          <h3>Community</h3>
+          <p>Join builders shipping assistants and sharing production patterns.</p>
+        </a>
+      </section>
+
       <section class="container final-cta card">
         <h2>Build your own personal AI stack.</h2>
         <p>
@@ -179,6 +207,19 @@
           btn.classList.add('active');
           btn.setAttribute('aria-selected', 'true');
           document.querySelector(`[data-content="${mode}"]`)?.classList.add('active');
+        });
+      });
+
+      document.querySelectorAll('.code-line').forEach((line) => {
+        const code = line.querySelector('code')?.textContent?.trim();
+        if (!code) return;
+        line.title = 'Click to copy';
+        line.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(code);
+            line.classList.add('copied');
+            setTimeout(() => line.classList.remove('copied'), 900);
+          } catch {}
         });
       });
 
