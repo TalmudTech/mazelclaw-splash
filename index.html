@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MazelClaw — Personal AI Assistant</title>
+    <meta
+      name="description"
+      content="MazelClaw is a personal AI assistant you control. Chat with it from Telegram, WhatsApp, or Discord and let it actually do real work."
+    />
+    <meta property="og:title" content="MazelClaw — Personal AI Assistant" />
+    <meta
+      property="og:description"
+      content="The AI that actually does things. Open source, self-hosted, and yours."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="./assets/mazelclaw-logo-text.png" />
+    <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="bg-grid"></div>
+    <header class="topbar container">
+      <a class="brand" href="#">
+        <img src="./assets/mazelclaw-logo-text.png" alt="MazelClaw" />
+      </a>
+      <nav class="actions">
+        <a class="btn btn-ghost" href="https://github.com/TalmudTech/mazelclaw" target="_blank" rel="noopener">GitHub Repo</a>
+        <a class="btn btn-primary" href="https://github.com/TalmudTech/mazelclaw" target="_blank" rel="noopener">Get Started</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero container">
+        <p class="kicker">Open source · self-hosted · always-on</p>
+        <h1>The AI that actually does things.</h1>
+        <p class="subtitle">
+          Clears inboxes, manages calendars, runs terminal tasks, controls your browser,
+          and works from chat apps you already use.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="https://github.com/TalmudTech/mazelclaw" target="_blank" rel="noopener">View MazelClaw on GitHub</a>
+          <a class="btn btn-ghost" href="#quickstart">Quick Start</a>
+        </div>
+      </section>
+
+      <section id="quickstart" class="container card quickstart">
+        <h2>Quick Start</h2>
+        <div class="code">
+          <span class="prompt">$</span>
+          <code>git clone https://github.com/TalmudTech/mazelclaw.git</code>
+        </div>
+        <div class="code">
+          <span class="prompt">$</span>
+          <code>cd mazelclaw && pnpm install && pnpm run build</code>
+        </div>
+        <div class="code">
+          <span class="prompt">$</span>
+          <code>pnpm run openclaw onboard</code>
+        </div>
+      </section>
+
+      <section class="container features">
+        <h2>What It Does</h2>
+        <div class="grid-3">
+          <article class="card">
+            <h3>Runs on your machine</h3>
+            <p>Mac, Linux, or cloud VM. Keep your context and data under your control.</p>
+          </article>
+          <article class="card">
+            <h3>Works in chat apps</h3>
+            <p>Telegram, WhatsApp, Discord, Slack, Signal, and more.</p>
+          </article>
+          <article class="card">
+            <h3>Actually executes tasks</h3>
+            <p>Browser automation, shell commands, file ops, tools, and background agents.</p>
+          </article>
+          <article class="card">
+            <h3>Persistent memory</h3>
+            <p>Remembers preferences, context, and project history across sessions.</p>
+          </article>
+          <article class="card">
+            <h3>Skills + plugins</h3>
+            <p>Install existing skills or build custom ones for your exact workflow.</p>
+          </article>
+          <article class="card">
+            <h3>Built for power users</h3>
+            <p>Hackable architecture with clean CLI workflows and extensible tooling.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="container card spotlight">
+        <h2>Why MazelClaw</h2>
+        <p>
+          MazelClaw is a branded OpenClaw-based stack focused on real-world assistant workflows,
+          fast iteration, and deep customization.
+        </p>
+        <p>
+          This splash page showcases the project and links directly to the main repo for setup and source.
+        </p>
+        <a class="btn btn-primary" href="https://github.com/TalmudTech/mazelclaw" target="_blank" rel="noopener">Open the repo</a>
+      </section>
+
+      <section class="container cta-grid">
+        <a class="cta card" href="https://github.com/TalmudTech/mazelclaw" target="_blank" rel="noopener">
+          <h3>Source Code</h3>
+          <p>Browse the MazelClaw repository and track updates.</p>
+        </a>
+        <a class="cta card" href="https://docs.openclaw.ai" target="_blank" rel="noopener">
+          <h3>Documentation</h3>
+          <p>Read OpenClaw docs for architecture, setup, and integrations.</p>
+        </a>
+        <a class="cta card" href="https://discord.com/invite/clawd" target="_blank" rel="noopener">
+          <h3>Community</h3>
+          <p>Join Discord to share builds, ask questions, and find skills.</p>
+        </a>
+      </section>
+    </main>
+
+    <footer class="container footer">
+      <p>© <span id="year"></span> MazelClaw. Built on OpenClaw.</p>
+    </footer>
+
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
