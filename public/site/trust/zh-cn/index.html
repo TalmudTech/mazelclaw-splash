@@ -1,0 +1,499 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>信任 - OpenClaw</title><meta name="description" content="OpenClaw 安全计划 - 针对可执行真实操作的 AI 代理的正式安全倡议。"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet"><style>
+    :root {
+      --primary: #ff5a36;
+      --primary-light: #ff8a6b;
+      --bg: #ffffff;
+      --gray-50: rgb(250,245,244);
+      --gray-100: rgb(245,240,239);
+      --gray-200: rgb(230,225,224);
+      --gray-300: rgb(213,208,207);
+      --gray-400: rgb(166,161,160);
+      --gray-500: rgb(119,114,113);
+      --gray-600: rgb(87,82,81);
+      --gray-700: rgb(70,65,64);
+      --gray-800: rgb(45,40,38);
+      --gray-900: rgb(30,25,24);
+      --gray-950: rgb(17,12,11);
+      --heading: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --body: "Fragment Mono", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { height: 100%; scroll-behavior: smooth; }
+
+    body {
+      min-height: 100%;
+      font-family: var(--body);
+      color: var(--gray-500);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    ::selection { background: var(--primary); color: #fff; }
+
+    a { color: var(--gray-500); text-decoration: none; }
+    a:hover { color: var(--gray-900); }
+
+    /* Topbar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .topbar-inner {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: var(--gray-900);
+    }
+
+    .topbar-brand:hover { color: var(--gray-900); }
+
+    .topbar-brand img {
+      height: 28px;
+      width: auto;
+    }
+
+    .topbar-nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .topbar-link {
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-family: var(--heading);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-500);
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .topbar-link:hover {
+      color: var(--gray-900);
+      background: var(--gray-50);
+    }
+
+    .topbar-link.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .lang-sep {
+      color: var(--gray-200);
+      font-size: 13px;
+      margin: 0 2px;
+      user-select: none;
+    }
+
+    .lang-switcher {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: 8px;
+      padding-left: 10px;
+      border-left: 1px solid var(--gray-200);
+    }
+
+    .lang-link {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-family: var(--heading);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-400);
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .lang-link:hover {
+      color: var(--gray-900);
+      background: var(--gray-50);
+    }
+
+    .lang-link.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 40px 24px;
+      min-height: 100vh;
+    }
+
+    .article-header {
+      margin-bottom: 32px;
+    }
+
+    .article-title {
+      font-family: var(--heading);
+      font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 700;
+      color: var(--gray-900);
+      line-height: 1.2;
+      margin-bottom: 0;
+    }
+
+    .article-content {
+      line-height: 1.8;
+      color: var(--gray-600);
+    }
+
+    .article-content p:first-child {
+      font-size: 1.15rem;
+      line-height: 1.7;
+      color: var(--gray-800);
+      margin-bottom: 16px;
+    }
+
+    .article-content p {
+      margin-bottom: 20px;
+    }
+
+    .article-content .section {
+      margin-top: 28px;
+    }
+
+    .article-content h2 {
+      font-family: var(--heading);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-top: 32px;
+      margin-bottom: 4px;
+    }
+
+    .article-content h3 {
+      margin-top: 24px;
+      margin-bottom: 4px;
+      font-family: var(--heading);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--gray-900);
+    }
+
+    .article-content h4 {
+      margin-top: 20px;
+      margin-bottom: 4px;
+      font-family: var(--heading);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--gray-800);
+    }
+
+    .article-content ul,
+    .article-content ol {
+      margin-bottom: 12px;
+      padding-left: 24px;
+    }
+
+    .article-content li {
+      margin-bottom: 4px;
+      padding-left: 8px;
+    }
+
+    .article-content li::marker { color: var(--primary); }
+
+    .article-content strong {
+      color: var(--gray-800);
+      font-weight: 600;
+    }
+
+    .article-content a {
+      color: var(--primary);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .article-content a:hover { color: var(--gray-900); }
+
+    .article-content code {
+      font-family: var(--body);
+      font-size: 0.9em;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--gray-100);
+      color: var(--primary);
+    }
+
+    .article-content pre {
+      padding: 20px;
+      border-radius: 12px;
+      background: var(--gray-950);
+      color: var(--gray-100);
+      border: 1px solid var(--gray-200);
+      overflow-x: auto;
+      margin-bottom: 24px;
+    }
+
+    .article-content pre code {
+      padding: 0;
+      background: transparent;
+      color: inherit;
+    }
+
+    .article-content .phases {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 820px) {
+      .article-content .phases { grid-template-columns: 1fr; }
+    }
+
+    .article-content .phase {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px;
+      border-radius: 12px;
+      background: var(--bg);
+      border: 1px solid var(--gray-200);
+    }
+
+    .article-content .phase-num {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      color: #fff;
+      background: var(--primary);
+      flex: 0 0 auto;
+    }
+
+    .article-content .table-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-top: 12px;
+      margin-bottom: 20px;
+    }
+
+    .article-content .table-wrap table {
+      min-width: 640px;
+    }
+
+    .article-content table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 12px;
+      border: 1px solid var(--gray-200);
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .article-content th,
+    .article-content td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--gray-200);
+      vertical-align: top;
+      color: var(--gray-600);
+      font-size: 0.95rem;
+    }
+
+    .article-content th {
+      text-align: left;
+      color: var(--gray-900);
+      font-weight: 600;
+      background: var(--gray-50);
+    }
+
+    .article-content .report-box {
+      margin-top: 12px;
+      padding: 18px;
+      border-radius: 12px;
+      border-left: 3px solid var(--primary);
+      background: rgba(255,90,54,0.04);
+    }
+
+    .article-content .email-display {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: var(--gray-950);
+      border: 1px solid var(--gray-200);
+      font-family: var(--body);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .article-content .fields {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .article-content .field {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--gray-200);
+      background: var(--bg);
+      color: var(--gray-600);
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    .article-content .checks {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 820px) {
+      .article-content .checks { grid-template-columns: 1fr; }
+    }
+
+    .article-content .check {
+      display: flex;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--gray-200);
+      background: var(--bg);
+    }
+
+    .article-content .check-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: var(--primary);
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+    }
+
+    .article-content .check-icon svg {
+      width: 18px;
+      height: 18px;
+      stroke: #fff !important;
+    }
+
+    .article-content .faq-item {
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid var(--gray-200);
+      background: var(--bg);
+      margin-top: 12px;
+    }
+
+    .article-content .faq-q {
+      color: var(--gray-900);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .article-content .faq-a { margin-top: 8px; }
+
+    .article-content .cta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .article-content .btn {
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: 1px solid var(--gray-200);
+      background: var(--bg);
+      color: var(--gray-900);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .article-content .btn:hover {
+      background: var(--gray-50);
+      border-color: var(--gray-300);
+      transform: translateY(-1px);
+    }
+
+    .article-content .btn-primary {
+      background: rgba(255,90,54,0.06);
+      border-color: rgba(255,90,54,0.25);
+    }
+
+    .article-content .btn-primary:hover {
+      border-color: var(--primary);
+    }
+
+    .article-content footer {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid var(--gray-200);
+      text-align: center;
+      color: var(--gray-400);
+      font-size: 0.9rem;
+    }
+
+    .article-content footer a {
+      color: var(--primary);
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 24px 16px; }
+      .topbar-inner { padding: 0 16px; }
+      .article-content p:first-child { font-size: 1.1rem; }
+    }
+  </style></head> <body> <nav class="topbar"> <div class="topbar-inner"> <a href="https://openclaw.ai" class="topbar-brand"> <img src="/openclaw-logo-text-dark.png" alt="OpenClaw"> </a> <div class="topbar-nav"> <a href="/trust/zh-cn" class="topbar-link active">信任</a> <a href="/trust/zh-cn/threatmodel" class="topbar-link">威胁模型</a> <div class="lang-switcher"> <a href="/trust" class="lang-link">EN</a> <a href="/trust/zh-cn" class="lang-link active">中文</a> <a href="/trust/ko" class="lang-link">한국어</a> <a href="/trust/ja" class="lang-link">日本語</a> </div> </div> </div> </nav> <main class="container"> <article class="article"> <header class="article-header"> <h1 class="article-title">信任</h1> </header> <div class="article-content"> <p> 安全态势、路线图，以及我们对可执行真实操作的代理的思考。 </p> <section class="section"> <h2>计算安全的新时代</h2> <p>过去 20 年来，安全模型一直围绕着锁定设备和应用程序构建 - 在进程间通信之间设置边界、将互联网与本地隔离、对不受信任的代码进行沙盒化处理。这些原则仍然很重要。</p><p>但 AI 代理代表着一次根本性的转变。</p><p>与严格按照代码指令执行的传统软件不同，AI 代理能够理解自然语言并对操作做出决策。它们模糊了用户意图和机器执行之间的界限，甚至可以通过语言本身被操纵。</p><p>我们深知，像 OpenClaw 这样强大的工具伴随着巨大的责任。如果做得不好，AI 代理就是一种隐患。如果做得好，我们可以让个人计算变得更好。</p><p><strong>这个安全计划的存在就是为了把它做好。</strong></p> </section> <section class="section"> <h2>背景</h2> <p>OpenClaw 是一个 AI 代理平台。与仅生成文本的聊天机器人不同，OpenClaw 代理可以：</p> <ul> <li>在主机上执行 Shell 命令</li><li>通过 WhatsApp、Telegram、Discord、Slack 及其他渠道发送消息</li><li>在工作区中读写文件</li><li>从互联网获取任意 URL</li><li>调度自动化任务</li><li>访问已连接的服务和 API</li> </ul> <p>这些能力正是 OpenClaw 有用之处，也正是安全至关重要的原因。</p> <p>能够执行真实操作的 AI 代理引入了传统软件所不具备的风险：</p> <ol> <li><strong>提示注入</strong> - 恶意用户可以精心构造消息来操纵 AI 执行非预期的操作</li><li><strong>间接注入</strong> - 获取的 URL、电子邮件或文档中的恶意内容可以劫持代理行为</li><li><strong>工具滥用</strong> - 即使没有注入攻击，配置不当的代理也可能因权限过于宽松而造成损害</li><li><strong>身份风险</strong> - 代理可以以您的身份发送消息，可能损害人际关系或声誉</li> </ol> <p>这些不是理论上的风险，而是已被记录在案的攻击模式，影响所有 AI 代理系统。</p> </section> <section class="section"> <h2>范围</h2> <p>本安全计划覆盖整个 OpenClaw 生态系统。<strong>没有任何内容在范围之外。</strong></p>  <h4>核心平台</h4> <ul> <li>OpenClaw CLI 和 Gateway（<code>openclaw</code>）</li><li>代理执行引擎</li><li>工具实现</li><li>渠道集成（WhatsApp、Telegram、Discord、Slack、Signal 等）</li> </ul>  <h4>应用程序</h4> <ul> <li>macOS 桌面应用</li><li>iOS 移动应用</li><li>Android 移动应用</li><li>Web 界面</li> </ul>  <h4>服务</h4> <ul> <li>ClawHub (clawhub.ai) - 技能市场和注册中心</li><li>文档 (docs.openclaw.ai)</li><li>所有托管基础设施</li> </ul>  <h4>扩展</h4> <ul> <li>官方扩展（<code>extensions/</code>）</li><li>插件 SDK 和第三方插件</li><li>通过 ClawHub 分发的技能</li> </ul>  <h4>人员</h4> <ul> <li>核心维护者和贡献者</li><li>安全流程和响应程序</li><li>供应链和依赖管理</li> </ul>  </section> <section class="section"> <h2>计划概述</h2> <p>我们正在建立一个包含四个阶段的正式安全职能：</p> <div class="phases"> <div class="phase"> <div class="phase-num">1</div> <div class="phase-content"> <h4>透明度</h4> <p>与社区共同公开开发威胁模型</p> </div> </div><div class="phase"> <div class="phase-num">2</div> <div class="phase-content"> <h4>产品安全路线图</h4> <p>定义防御工程目标并公开跟踪</p> </div> </div><div class="phase"> <div class="phase-num">3</div> <div class="phase-content"> <h4>代码审查</h4> <p>对整个代码库进行人工安全审查</p> </div> </div><div class="phase"> <div class="phase-num">4</div> <div class="phase-content"> <h4>安全分诊</h4> <p>建立处理漏洞报告的正式流程</p> </div> </div> </div> </section> <section class="section"> <h2>第一阶段：透明度</h2> <h3>目标</h3> <p>公开开发并发布我们的威胁模型，邀请社区贡献，使用户了解风险并能就其部署做出明智的决策。</p> <h3>原因</h3> <p>安全靠隐匿是行不通的。攻击者已经了解这些技术 - 它们被记录在学术论文、安全博客和会议演讲中。目前缺少的是向用户清晰传达以下信息：</p> <ul> <li>存在哪些风险</li><li>我们正在采取哪些措施</li><li>用户应如何保护自己</li> </ul> <p>通过公开开发威胁模型，我们可以受益于集体专业知识，并通过透明度建立信任。</p> <h3>威胁模型覆盖范围</h3> <div class="table-wrap"> <table> <thead> <tr> <th>类别</th><th>涵盖的风险</th> </tr> </thead> <tbody> <tr> <td><strong>A. 输入操纵</strong></td><td>直接提示注入、间接注入、工具参数注入、上下文操纵</td> </tr><tr> <td><strong>B. 认证与访问</strong></td><td>AllowFrom 绕过、权限提升、跨会话访问、API 密钥泄露</td> </tr><tr> <td><strong>C. 数据安全</strong></td><td>系统提示泄露、工作区暴露、记忆泄漏、数据外泄</td> </tr><tr> <td><strong>D. 基础设施</strong></td><td>SSRF、网关暴露、依赖漏洞、文件权限</td> </tr><tr> <td><strong>E. 运维</strong></td><td>日志记录敏感数据、监控不足、资源耗尽、配置错误</td> </tr><tr> <td><strong>F. 供应链</strong></td><td>ClawHub 技能完整性、扩展安全、依赖漏洞</td> </tr> </tbody> </table> </div> <h3>威胁模型范围</h3> <div class="table-wrap"> <table> <thead> <tr> <th>组件</th><th>纳入原因</th> </tr> </thead> <tbody> <tr> <td>核心平台（CLI、Gateway、代理、工具）</td><td>主要攻击面</td> </tr><tr> <td>ClawHub (clawhub.ai)</td><td>技能市场 - 供应链风险</td> </tr><tr> <td>移动应用（iOS、Android）</td><td>代理控制界面、凭据存储</td> </tr><tr> <td>桌面应用（macOS）</td><td>Gateway 宿主、系统集成</td> </tr><tr> <td>扩展和插件</td><td>第三方代码执行</td> </tr><tr> <td>构建和发布流水线</td><td>分发完整性</td> </tr> </tbody> </table> </div> <p>威胁模型中的每个风险都将包含描述和严重性评级、攻击示例、当前缓解措施、已知缺口以及用户建议。</p><p><strong>威胁模型将通过 Pull Request 向社区开放贡献。</strong></p> </section> <section class="section"> <h2>第二阶段：产品安全路线图</h2> <h3>目标</h3> <p>创建公开的产品安全路线图，定义防御工程目标，以 GitHub Issues 形式跟踪，以便社区可以关注进展、提供意见并做出贡献。</p> <h3>防御工程目标</h3> <div class="table-wrap"> <table> <thead> <tr> <th>类别</th><th>目标</th><th>描述</th> </tr> </thead> <tbody> <tr> <td rowspan="3"><strong>提示注入防护</strong></td> <td>输入验证</td><td>针对注入尝试的模式检测和告警</td> </tr><tr>  <td>工具确认</td><td>对敏感操作要求明确批准</td> </tr><tr>  <td>上下文隔离</td><td>防止跨会话污染</td> </tr><tr> <td rowspan="3"><strong>隐私增强</strong></td> <td>系统提示保护</td><td>防止系统提示泄露</td> </tr><tr>  <td>数据最小化</td><td>减少不必要的数据保留</td> </tr><tr>  <td>审计日志</td><td>清晰查看代理操作记录</td> </tr><tr> <td rowspan="3"><strong>访问控制</strong></td> <td>细粒度权限</td><td>按工具、按会话的访问控制</td> </tr><tr>  <td>速率限制</td><td>防止资源耗尽</td> </tr><tr>  <td>支出控制</td><td>API 费用硬性限额</td> </tr><tr> <td rowspan="3"><strong>供应链</strong></td> <td>技能验证</td><td>ClawHub 技能的完整性检查</td> </tr><tr>  <td>依赖审计</td><td>自动化漏洞扫描</td> </tr><tr>  <td>签名发布</td><td>更新的加密验证</td> </tr> </tbody> </table> </div> <p>具体的优先事项将通过第三阶段代码审查来识别，并在发现和分诊后添加到公开路线图中。</p> </section> <section class="section"> <h2>第三阶段：代码审查</h2> <h3>目标</h3> <p>虽然社区一直在持续不断地发现和修复缺陷 - 我们对每一份贡献都心怀感激 - 但我们也认识到这是一个由贡献者尽力而为的开源项目。第三阶段是一次专门的、全面的安全评估，旨在根除深层系统性问题，提高整体代码质量和用户安全。</p> <h3>范围</h3> <p>代码审查覆盖整个 OpenClaw 代码库和生态系统：</p> <div class="table-wrap"> <table> <thead> <tr> <th>领域</th><th>路径</th><th>原因</th> </tr> </thead> <tbody> <tr> <td>代理执行</td><td><code>src/agents/</code></td><td>核心攻击面 - 代理的运行方式</td> </tr><tr> <td>工具实现</td><td><code>src/agents/tools/</code></td><td>代理的能力 - 执行、消息、Web</td> </tr><tr> <td>消息处理</td><td><code>src/auto-reply/</code></td><td>所有用户输入的入口</td> </tr><tr> <td>安全工具</td><td><code>src/security/</code></td><td>现有安全控制</td> </tr><tr> <td>Gateway 服务器</td><td><code>src/gateway/</code></td><td>网络暴露组件</td> </tr><tr> <td>认证</td><td><code>src/*/auth*</code></td><td>凭据处理、API 密钥</td> </tr><tr> <td>会话管理</td><td><code>src/config/sessions.ts</code></td><td>跨会话隔离</td> </tr><tr> <td>配对与访问控制</td><td><code>src/pairing/</code>, <code>src/*/access-control*</code></td><td>DM 和群组访问控制</td> </tr><tr> <td>外部内容处理</td><td><code>src/security/external-content.ts</code></td><td>注入防御</td> </tr><tr> <td>macOS 桌面应用</td><td><code>apps/macos/</code></td><td>Gateway 宿主、系统集成</td> </tr><tr> <td>iOS 移动应用</td><td><code>apps/ios/</code></td><td>代理控制、凭据存储</td> </tr><tr> <td>Android 移动应用</td><td><code>apps/android/</code></td><td>代理控制、凭据存储</td> </tr><tr> <td>ClawHub</td><td>clawhub.ai</td><td>技能注册中心 - 供应链风险</td> </tr><tr> <td>官方扩展</td><td><code>extensions/</code></td><td>第一方插件</td> </tr><tr> <td>构建和发布流水线</td><td>CI/CD, scripts</td><td>分发完整性、签名</td> </tr> </tbody> </table> </div> <h3>方法</h3> <ol> <li><strong>人工代码审查</strong> - 对安全关键路径进行人工参与分析</li><li><strong>自动化扫描</strong> - 静态分析、依赖审计、密钥检测</li><li><strong>动态测试</strong> - 对运行中的系统尝试已记录的攻击模式</li><li><strong>架构审查</strong> - 评估信任边界和数据流</li> </ol> <h3>披露</h3> <ul> <li>所有严重和高风险发现在公开披露前修复</li><li>修复后发布发现摘要</li><li>完整报告可按需提供</li><li>在适用的情况下分配 CVE 编号</li> </ul> </section> <section class="section"> <h2>第四阶段：安全分诊职能</h2> <h3>目标</h3> <p>建立接收、分诊和响应安全漏洞报告的正式流程。</p> <div class="report-box"> <h4>报告漏洞</h4> <p>我们认真对待安全报告。请直接向问题所在的仓库报告漏洞：</p> <ul style="margin-top: 12px; margin-bottom: 12px;"> <li><strong>核心 CLI 和 Gateway</strong> - <a href="https://github.com/openclaw/openclaw/security/advisories/new">openclaw/openclaw</a></li><li><strong>macOS 桌面应用</strong> - <a href="https://github.com/openclaw/openclaw/security/advisories/new">openclaw/openclaw (apps/macos)</a></li><li><strong>iOS 应用</strong> - <a href="https://github.com/openclaw/openclaw/security/advisories/new">openclaw/openclaw (apps/ios)</a></li><li><strong>Android 应用</strong> - <a href="https://github.com/openclaw/openclaw/security/advisories/new">openclaw/openclaw (apps/android)</a></li><li><strong>ClawHub</strong> - <a href="https://github.com/openclaw/clawhub/security/advisories/new">openclaw/clawhub</a></li><li><strong>信任与威胁模型</strong> - <a href="https://github.com/openclaw/trust/issues/new">openclaw/trust</a></li> </ul> <p>对于不适用于特定仓库的问题，或者如果您不确定，请发送邮件至 <span class="email-display" style="display: inline; padding: 4px 8px; font-size: 13px;">security@openclaw.ai</span>，我们会进行转发处理。</p> <h4 style="margin-top: 24px;">报告必需内容</h4> <div class="fields"> <span class="field">标题</span><span class="field">严重性评估</span><span class="field">影响</span><span class="field">受影响组件</span><span class="field">技术复现步骤</span><span class="field">已证明的影响</span><span class="field">环境</span><span class="field">修复建议</span> </div> <p style="margin-top: 16px; font-size: 14px;">缺少复现步骤、已证明影响和修复建议的报告将被降低优先级。鉴于 AI 生成的扫描结果数量庞大，我们必须确保收到的是来自理解问题的研究人员的经过验证的报告。</p> </div> <h3>响应 SLA</h3> <div class="table-wrap"> <table> <thead> <tr> <th>严重性</th><th>定义</th><th>首次响应</th><th>分诊</th><th>修复目标</th> </tr> </thead> <tbody> <tr> <td><strong>严重</strong></td><td>RCE、认证绕过、大规模数据泄露</td><td>24 小时</td><td>48 小时</td><td>7 天</td> </tr><tr> <td><strong>高</strong></td><td>重大影响、单用户范围</td><td>48 小时</td><td>5 天</td><td>30 天</td> </tr><tr> <td><strong>中</strong></td><td>有限影响、需要特定条件</td><td>5 天</td><td>14 天</td><td>90 天</td> </tr><tr> <td><strong>低</strong></td><td>轻微问题、纵深防御</td><td>14 天</td><td>30 天</td><td>尽力而为</td> </tr> </tbody> </table> </div> <h3>我们的承诺</h3> <ul> <li>在 48 小时内确认所有完整报告</li><li>至少每 14 天提供状态更新</li><li>在安全公告中致谢研究人员（除非要求匿名）</li><li>不对善意的安全研究采取法律行动</li><li>考虑对符合条件的严重/高风险发现给予奖励（视具体情况而定）</li> </ul> </section> <section class="section"> <h2>安全与信任</h2> <p><strong>Jamieson O'Reilly</strong>（<a href="https://twitter.com/theonejvo">@theonejvo</a>）负责 OpenClaw 的安全与信任事务。</p> <p>Jamieson 是 <a href="https://dvuln.com">Dvuln</a> 的创始人、<a href="https://tryaether.ai">Aether AI</a>（世界上最危险的 AI，站在你这边）的联合创始人、CREST 顾问委员会成员，在攻击性安全、渗透测试和安全计划制定方面拥有丰富的经验。</p> <h3>职责</h3> <ul> <li>主导威胁建模和风险评估</li><li>确定代码审查范围并进行监督</li><li>建立分诊流程和响应程序</li><li>审查安全关键代码变更</li><li>为安全架构决策提供指导</li> </ul> </section> <section class="section"> <h2>当前安全态势</h2> <p>OpenClaw 已经具备安全控制措施。了解现有控制有助于用户适当地配置其部署。</p> <h3>默认安全</h3> <div class="checks"> <div class="check"> <div class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><path d="M5 12l5 5L19 7"></path></svg></div> <div> <strong>DM 策略：pairing</strong> <p style="margin: 4px 0 0; font-size: 14px;">未知发送者必须通过带有过期码的配对流程</p> </div> </div><div class="check"> <div class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><path d="M5 12l5 5L19 7"></path></svg></div> <div> <strong>执行安全：deny</strong> <p style="margin: 4px 0 0; font-size: 14px;">不在白名单上的命令默认被拒绝，需用户批准</p> </div> </div><div class="check"> <div class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><path d="M5 12l5 5L19 7"></path></svg></div> <div> <strong>默认 AllowFrom：仅自己</strong> <p style="margin: 4px 0 0; font-size: 14px;">如未配置，仅您自己的号码可以向代理发送私信</p> </div> </div><div class="check"> <div class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><path d="M5 12l5 5L19 7"></path></svg></div> <div> <strong>会话隔离</strong> <p style="margin: 4px 0 0; font-size: 14px;">对话按会话密钥隔离</p> </div> </div><div class="check"> <div class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><path d="M5 12l5 5L19 7"></path></svg></div> <div> <strong>SSRF 防护</strong> <p style="margin: 4px 0 0; font-size: 14px;">web_fetch 中阻止内部 IP 和 localhost</p> </div> </div><div class="check"> <div class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3"><path d="M5 12l5 5L19 7"></path></svg></div> <div> <strong>Gateway 认证必需</strong> <p style="margin: 4px 0 0; font-size: 14px;">WebSocket 连接必须进行认证</p> </div> </div> </div> <h3>验证您的配置</h3> <pre><code>openclaw security audit --deep</code></pre> <p>需要验证的关键项目：</p> <ul> <li>DM 策略为 <code>pairing</code> 或 <code>allowlist</code>（不是 <code>open</code>）</li><li>已为您的渠道配置 <code>allowFrom</code></li><li>除非有意为之，执行安全不应设置为 <code>full</code></li><li>Gateway 绑定到回环地址或位于认证之后</li><li>工作区不包含密钥信息</li> </ul> </section> <section class="section"> <h2>时间线</h2> <pre>第 1-2 周：第一阶段 - 透明度
+├── 威胁模型开发开始（开放贡献）
+├── 安全配置指南草案完成
+├── 可视化概览创建
+└── 发布公告
+
+第 3-4 周：第二阶段 - 产品安全路线图
+├── 为防御工程目标创建 GitHub Issues
+├── 设置安全标签和里程碑
+├── 社区意见征集期开始
+└── 首批安全工作启动
+
+第 5-8 周：第三阶段 - 代码审查准备
+├── 范围最终确定（整个代码库）
+├── 审查开始
+└── 初步发现
+
+第 8-12 周：第三阶段 - 代码审查执行
+├── 人工审查完成
+├── 发现记录
+├── 严重/高风险项修复
+└── 验证完成
+
+第 8 周起：第四阶段 - 分诊职能
+├── security@openclaw.ai 上线
+├── PGP 密钥发布
+├── 披露政策发布
+└── 首批安全公告（如需要）
+
+持续进行：
+├── 每月安全更新
+├── 持续完善威胁模型
+├── 定期依赖审计
+└── 社区参与</pre> </section> <section class="section"> <h2>常见问题</h2> <div class="faq-item"> <div class="faq-q">&quot;OpenClaw 现在安全吗？&quot;</div> <div class="faq-a"><p>是的，在正确配置的情况下。OpenClaw 默认启用了安全控制：</p><ul><li><strong>DM 策略</strong>：默认为 <code>pairing</code> - 未知发送者必须通过带有过期码的配对流程</li><li><strong>执行安全</strong>：默认为 <code>deny</code> 并启用 <code>ask: on-miss</code> - 危险命令需要批准</li><li><strong>AllowFrom</strong>：如未配置，默认仅限自己</li><li><strong>Gateway 认证</strong>：默认必需</li></ul><p>运行 <code>openclaw security audit --deep</code> 来验证您的配置。请参阅 <a href="https://docs.openclaw.ai/gateway/security">docs.openclaw.ai/gateway/security</a></p></div> </div><div class="faq-item"> <div class="faq-q">&quot;为什么要公开开发威胁模型？&quot;</div> <div class="faq-a"><p>这些攻击技术已经是公开知识 - 被记录在论文、博客和会议演讲中。公开开发可以受益于集体专业知识，通过透明度建立信任，并使我们对公众负责。</p></div> </div><div class="faq-item"> <div class="faq-q">&quot;为什么要求漏洞报告中包含修复建议？&quot;</div> <div class="faq-a"><p>我们会收到来自自动化扫描器和 AI 工具的报告，这些报告会标记理论性问题而并不真正理解它们。通过要求报告者提出修复方案，我们可以过滤扫描器噪声，获得来自理解问题的研究人员的可操作报告，并通过专家意见加速修复。</p></div> </div><div class="faq-item"> <div class="faq-q">&quot;ClawHub 怎么样？&quot;</div> <div class="faq-a"><p>ClawHub (clawhub.ai) 被纳入了整个安全计划的范围 - 包括威胁模型、代码审查和持续监控。技能是在您的代理上下文中运行的代码 - 供应链安全至关重要。</p></div> </div><div class="faq-item"> <div class="faq-q">&quot;移动应用和桌面应用怎么样？&quot;</div> <div class="faq-a"><p>所有应用程序都在范围内。iOS 应用、Android 应用和 macOS 桌面应用都将被代码审查覆盖并纳入威胁模型。没有任何内容在范围之外。</p></div> </div><div class="faq-item"> <div class="faq-q">&quot;我可以提供帮助吗？&quot;</div> <div class="faq-a"><ul><li>通过 Pull Request 为威胁模型做贡献</li><li>审查并评论带有安全标签的 Issues</li><li>向相关仓库报告漏洞（不确定时发送至 security@openclaw.ai）</li><li>帮助改善安全文档</li></ul></div> </div> </section> <div class="cta"> <a href="https://github.com/openclaw/openclaw/labels/security" class="btn btn-primary"> <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"></path></svg> 查看安全路线图 </a> <a href="https://docs.openclaw.ai/security" class="btn btn-secondary">阅读完整文档</a> </div> <footer> <p>OpenClaw 安全计划 · <a href="https://openclaw.ai">openclaw.ai</a> · <a href="https://clawhub.ai">clawhub.ai</a></p> </footer> </div> </article> </main> </body></html>

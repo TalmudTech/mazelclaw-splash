@@ -1,0 +1,650 @@
+<!DOCTYPE html><html lang="ja"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>脅威モデル - OpenClaw トラスト</title><meta name="description" content="MITRE ATLASフレームワークに基づくOpenClaw脅威モデル - AIエージェントシステムに対する敵対的脅威。"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Fragment+Mono:ital@0;1&display=swap" rel="stylesheet"><style>
+    :root {
+      --primary: #ff5a36;
+      --primary-light: #ff8a6b;
+      --bg: #ffffff;
+      --gray-50: rgb(250,245,244);
+      --gray-100: rgb(245,240,239);
+      --gray-200: rgb(230,225,224);
+      --gray-300: rgb(213,208,207);
+      --gray-400: rgb(166,161,160);
+      --gray-500: rgb(119,114,113);
+      --gray-600: rgb(87,82,81);
+      --gray-700: rgb(70,65,64);
+      --gray-800: rgb(45,40,38);
+      --gray-900: rgb(30,25,24);
+      --gray-950: rgb(17,12,11);
+      --heading: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --body: "Fragment Mono", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { height: 100%; scroll-behavior: smooth; }
+
+    body {
+      min-height: 100%;
+      font-family: var(--body);
+      color: var(--gray-500);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    ::selection { background: var(--primary); color: #fff; }
+
+    a { color: var(--gray-500); text-decoration: none; }
+    a:hover { color: var(--gray-900); }
+
+    /* Topbar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--bg);
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .topbar-inner {
+      max-width: 1800px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: var(--gray-900);
+    }
+
+    .topbar-brand:hover { color: var(--gray-900); }
+
+    .topbar-brand img {
+      height: 28px;
+      width: auto;
+    }
+
+    .topbar-nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .topbar-link {
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-family: var(--heading);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-500);
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .topbar-link:hover {
+      color: var(--gray-900);
+      background: var(--gray-50);
+    }
+
+    .topbar-link.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .lang-switcher {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: 8px;
+      padding-left: 10px;
+      border-left: 1px solid var(--gray-200);
+    }
+
+    .lang-link {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-family: var(--heading);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-400);
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .lang-link:hover {
+      color: var(--gray-900);
+      background: var(--gray-50);
+    }
+
+    .lang-link.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .tm-container {
+      max-width: 1800px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    .article-title {
+      font-family: var(--heading);
+      font-size: clamp(1.75rem, 5vw, 2.5rem);
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--gray-500);
+      margin-bottom: 12px;
+    }
+
+    .header-badges {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 36px;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      height: 24px;
+      padding: 0 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge-version {
+      background: rgba(255,90,54,0.08);
+      color: var(--primary);
+    }
+
+    .badge-atlas {
+      background: var(--gray-100);
+      color: var(--gray-600);
+    }
+
+    /* Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+
+    .stat-card {
+      background: var(--bg);
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-family: var(--heading);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .stat-value.critical { color: #ef4444; }
+    .stat-value.high { color: #f97316; }
+    .stat-value.medium { color: #ca8a04; }
+    .stat-value.low { color: #16a34a; }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--gray-400);
+      margin-top: 2px;
+    }
+
+    .risk-legend {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--gray-500);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+    }
+
+    .section-title {
+      font-family: var(--heading);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 16px;
+    }
+
+    /* Matrix */
+    .matrix-section { margin-bottom: 40px; position: relative; }
+
+    .matrix-container {
+      overflow-x: auto;
+      padding-bottom: 8px;
+      -webkit-overflow-scrolling: touch;
+      mask-image: linear-gradient(to right, black calc(100% - 24px), transparent);
+      -webkit-mask-image: linear-gradient(to right, black calc(100% - 24px), transparent);
+    }
+
+    /* Remove fade once scrolled to end */
+    .matrix-container.scrolled-end {
+      mask-image: none;
+      -webkit-mask-image: none;
+    }
+
+    .matrix { display: flex; gap: 10px; min-width: max-content; }
+
+    .tactic-column { width: 180px; flex-shrink: 0; }
+
+    .tactic-header {
+      padding: 10px 12px;
+      border-radius: 10px 10px 0 0;
+      text-align: center;
+    }
+
+    .tactic-name {
+      font-family: var(--heading);
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .tactic-atlas {
+      font-size: 10px;
+      opacity: 0.7;
+      margin-top: 2px;
+      color: #fff;
+    }
+
+    .threat-list {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      padding: 6px;
+      min-height: 180px;
+    }
+
+    .threat-card {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 6px;
+      border-left: 3px solid;
+      cursor: pointer;
+      transition: background 0.15s;
+      border-right: 1px solid var(--gray-200);
+      border-top: 1px solid var(--gray-200);
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .threat-card:hover { background: var(--gray-50); }
+    .threat-card.selected { outline: 2px solid var(--primary); outline-offset: -2px; }
+    .threat-card:last-child { margin-bottom: 0; }
+
+    .threat-id {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--gray-400);
+      margin-bottom: 3px;
+    }
+
+    .threat-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-800);
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .threat-meta { display: flex; gap: 5px; flex-wrap: wrap; }
+
+    .atlas-tag {
+      font-size: 10px;
+      padding: 1px 6px;
+      background: var(--gray-100);
+      border-radius: 4px;
+      color: var(--gray-500);
+    }
+
+    .risk-tag {
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    /* Detail overlay */
+    .detail-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 200;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+    }
+
+    .detail-overlay.active { display: flex; }
+
+    .detail-panel {
+      background: var(--bg);
+      border-radius: 16px;
+      max-width: 680px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      border: 1px solid var(--gray-200);
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+    }
+
+    .detail-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      border-radius: 16px 16px 0 0;
+    }
+
+    .detail-id { font-size: 12px; color: var(--gray-400); margin-bottom: 4px; }
+
+    .detail-title {
+      font-family: var(--heading);
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+    }
+
+    .detail-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    .detail-badge {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .close-btn {
+      background: none;
+      border: 1px solid var(--gray-200);
+      color: var(--gray-400);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 2px 8px;
+      line-height: 1;
+      border-radius: 8px;
+    }
+
+    .close-btn:hover { color: var(--gray-700); border-color: var(--gray-300); }
+
+    .detail-body { padding: 20px 24px; }
+    .detail-section { margin-bottom: 16px; }
+    .detail-section:last-child { margin-bottom: 0; }
+
+    .detail-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .detail-value { font-size: 13px; color: var(--gray-600); line-height: 1.6; }
+
+    .atlas-link { color: var(--primary); }
+    .atlas-link:hover { text-decoration: underline; }
+
+    /* Chains */
+    .chains-section { margin-bottom: 40px; }
+
+    .chains-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 12px;
+    }
+
+    .chain-card {
+      background: var(--bg);
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid var(--gray-200);
+    }
+
+    .chain-name {
+      font-family: var(--heading);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 10px;
+    }
+
+    .chain-flow {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .chain-step {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      background: rgba(255,90,54,0.08);
+      color: var(--primary);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .chain-step:hover { background: rgba(255,90,54,0.15); }
+
+    .chain-arrow { color: var(--gray-300); font-size: 13px; }
+    .chain-desc { font-size: 12px; color: var(--gray-500); line-height: 1.5; }
+
+    /* Trust boundaries */
+    .boundaries-section { margin-bottom: 40px; }
+
+    .boundaries-flow {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .boundary-arrow-h {
+      display: flex;
+      align-items: center;
+      padding: 0 6px;
+      color: var(--gray-300);
+      flex-shrink: 0;
+    }
+
+    .boundary-card {
+      min-width: 200px;
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .boundary-adjacent {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 200px;
+      flex: 1;
+    }
+
+    .boundary-adjacent .boundary-card { min-width: unset; }
+
+    .boundary-card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--gray-200);
+      background: var(--gray-50);
+    }
+
+    .boundary-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 12px;
+      font-family: var(--heading);
+      color: #fff;
+      background: var(--primary);
+      flex: 0 0 auto;
+    }
+
+    .boundary-card-name {
+      font-family: var(--heading);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-900);
+      line-height: 1.2;
+    }
+
+    .boundary-card-zone {
+      font-size: 11px;
+      color: var(--gray-400);
+    }
+
+    .boundary-controls {
+      list-style: none;
+      padding: 10px 14px;
+      margin: 0;
+      flex: 1;
+    }
+
+    .boundary-controls li {
+      padding: 2px 0 2px 14px;
+      position: relative;
+      font-size: 12px;
+      color: var(--gray-600);
+      line-height: 1.5;
+    }
+
+    .boundary-controls li::before {
+      content: '';
+      position: absolute;
+      left: 2px;
+      top: 9px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+
+    /* Footer */
+    .tm-footer {
+      padding: 28px 0;
+      margin-top: 12px;
+      border-top: 1px solid var(--gray-200);
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-400);
+    }
+
+    .tm-footer a { color: var(--primary); }
+    .footer-atlas { margin-bottom: 12px; }
+    .footer-atlas p { margin-bottom: 3px; }
+    .footer-atlas-sub { font-size: 11px; }
+
+    .footer-links {
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .footer-sep { color: var(--gray-200); }
+    .footer-contact { margin-bottom: 10px; }
+    .footer-version { font-size: 10px; opacity: 0.5; }
+
+    @media (max-width: 900px) {
+      .boundaries-flow { flex-direction: column; }
+      .boundary-arrow-h { justify-content: center; padding: 4px 0; transform: rotate(90deg); }
+      .boundary-adjacent { flex-direction: row; gap: 8px; }
+    }
+
+    @media (max-width: 540px) {
+      .boundary-adjacent { flex-direction: column; }
+    }
+
+    @media (max-width: 480px) {
+      .tm-container { padding: 24px 16px; }
+      .topbar-inner { padding: 0 16px; }
+    }
+  </style></head> <body> <nav class="topbar"> <div class="topbar-inner"> <a href="https://openclaw.ai" class="topbar-brand"> <img src="/openclaw-logo-text-dark.png" alt="OpenClaw"> </a> <div class="topbar-nav"> <a href="/trust/ja" class="topbar-link">トラスト</a> <a href="/trust/ja/threatmodel" class="topbar-link active">脅威モデル</a> <div class="lang-switcher"> <a href="/trust/threatmodel" class="lang-link">EN</a> <a href="/trust/zh-cn/threatmodel" class="lang-link">中文</a> <a href="/trust/ko/threatmodel" class="lang-link">한국어</a> <a href="/trust/ja/threatmodel" class="lang-link active">日本語</a> </div> </div> </div> </nav> <main class="tm-container"> <h1 class="article-title">脅威モデル</h1> <p class="subtitle">AIエージェントセキュリティのためのMITRE ATLASフレームワーク</p> <div class="header-badges"> <span class="header-badge badge-version">v1.0-draft</span> <span class="header-badge badge-atlas">MITRE ATLAS 2025</span> </div>  <div class="stats-grid"> <div class="stat-card"><div class="stat-value">37</div><div class="stat-label">脅威の総数</div></div> <div class="stat-card"><div class="stat-value critical">6</div><div class="stat-label">クリティカルリスク</div></div> <div class="stat-card"><div class="stat-value high">16</div><div class="stat-label">高リスク</div></div> <div class="stat-card"><div class="stat-value medium">12</div><div class="stat-label">中リスク</div></div> <div class="stat-card"><div class="stat-value low">3</div><div class="stat-label">低リスク</div></div> </div> <div class="risk-legend"> <div class="legend-item"><div class="legend-dot" style="background:#ef4444"></div><span>クリティカル</span></div> <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div><span>高</span></div> <div class="legend-item"><div class="legend-dot" style="background:#eab308"></div><span>中</span></div> <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div><span>低</span></div> </div> <section class="matrix-section"> <h2 class="section-title">ATLAS戦術別脅威マトリクス</h2> <div class="matrix-container"> <div class="matrix"> <div class="tactic-column"> <div class="tactic-header" style="background: #6b7280"> <div class="tactic-name">偵察</div> <div class="tactic-atlas">AML.TA0002</div> </div> <div class="threat-list"> <div class="threat-card" data-threat-id="T-RECON-001" data-risk="Medium" style="border-left-color: #eab308"> <div class="threat-id">T-RECON-001</div> <div class="threat-name">エージェントエンドポイントの発見</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0006</span> <span class="risk-tag" style="background: #eab30812; color: #eab308">Medium</span> </div> </div><div class="threat-card" data-threat-id="T-RECON-002" data-risk="Low" style="border-left-color: #22c55e"> <div class="threat-id">T-RECON-002</div> <div class="threat-name">チャネル統合のプロービング</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0006</span> <span class="risk-tag" style="background: #22c55e12; color: #22c55e">Low</span> </div> </div><div class="threat-card" data-threat-id="T-RECON-003" data-risk="Low" style="border-left-color: #22c55e"> <div class="threat-id">T-RECON-003</div> <div class="threat-name">スキル機能の偵察</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0006</span> <span class="risk-tag" style="background: #22c55e12; color: #22c55e">Low</span> </div> </div> </div> </div><div class="tactic-column"> <div class="tactic-header" style="background: #8b5cf6"> <div class="tactic-name">初期アクセス</div> <div class="tactic-atlas">AML.TA0004</div> </div> <div class="threat-list"> <div class="threat-card" data-threat-id="T-ACCESS-001" data-risk="Medium" style="border-left-color: #eab308"> <div class="threat-id">T-ACCESS-001</div> <div class="threat-name">ペアリングコードの傍受</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0040</span> <span class="risk-tag" style="background: #eab30812; color: #eab308">Medium</span> </div> </div><div class="threat-card" data-threat-id="T-ACCESS-002" data-risk="Medium" style="border-left-color: #eab308"> <div class="threat-id">T-ACCESS-002</div> <div class="threat-name">AllowFromのなりすまし</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0040</span> <span class="risk-tag" style="background: #eab30812; color: #eab308">Medium</span> </div> </div><div class="threat-card" data-threat-id="T-ACCESS-003" data-risk="High" style="border-left-color: #f97316"> <div class="threat-id">T-ACCESS-003</div> <div class="threat-name">トークンの窃取</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0040</span> <span class="risk-tag" style="background: #f9731612; color: #f97316">High</span> </div> </div><div class="threat-card" data-threat-id="T-ACCESS-004" data-risk="Critical" style="border-left-color: #ef4444"> <div class="threat-id">T-ACCESS-004</div> <div class="threat-name">悪意のあるスキルによるエントリポイント</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0010.001</span> <span class="risk-tag" style="background: #ef444412; color: #ef4444">Critical</span> </div> </div><div class="threat-card" data-threat-id="T-ACCESS-005" data-risk="High" style="border-left-color: #f97316"> <div class="threat-id">T-ACCESS-005</div> <div class="threat-name">侵害されたスキルのアップデート</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0010.001</span> <span class="risk-tag" style="background: #f9731612; color: #f97316">High</span> </div> </div><div class="threat-card" data-threat-id="T-ACCESS-006" data-risk="High" style="border-left-color: #f97316"> <div class="threat-id">T-ACCESS-006</div> <div class="threat-name">チャネル経由のプロンプトインジェクション</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0051.000</span> <span class="risk-tag" style="background: #f9731612; color: #f97316">High</span> </div> </div> </div> </div><div class="tactic-column"> <div class="tactic-header" style="background: #ef4444"> <div class="tactic-name">実行</div> <div class="tactic-atlas">AML.TA0005</div> </div> <div class="threat-list"> <div class="threat-card" data-threat-id="T-EXEC-001" data-risk="Critical" style="border-left-color: #ef4444"> <div class="threat-id">T-EXEC-001</div> <div class="threat-name">直接プロンプトインジェクション</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0051.000</span> <span class="risk-tag" style="background: #ef444412; color: #ef4444">Critical</span> </div> </div><div class="threat-card" data-threat-id="T-EXEC-002" data-risk="High" style="border-left-color: #f97316"> <div class="threat-id">T-EXEC-002</div> <div class="threat-name">間接プロンプトインジェクション</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0051.001</span> <span class="risk-tag" style="background: #f9731612; color: #f97316">High</span> </div> </div><div class="threat-card" data-threat-id="T-EXEC-003" data-risk="High" style="border-left-color: #f97316"> <div class="threat-id">T-EXEC-003</div> <div class="threat-name">ツール引数インジェクション</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0051.000</span> <span class="risk-tag" style="background: #f9731612; color: #f97316">High</span> </div> </div><div class="threat-card" data-threat-id="T-EXEC-004" data-risk="High" style="border-left-color: #f97316"> <div class="threat-id">T-EXEC-004</div> <div class="threat-name">実行承認のバイパス</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0043</span> <span class="risk-tag" style="background: #f9731612; color: #f97316">High</span> </div> </div><div class="threat-card" data-threat-id="T-EXEC-005" data-risk="Critical" style="border-left-color: #ef4444"> <div class="threat-id">T-EXEC-005</div> <div class="threat-name">悪意のあるスキルコードの実行</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0010.001</span> <span class="risk-tag" style="background: #ef444412; color: #ef4444">Critical</span> </div> </div><div class="threat-card" data-threat-id="T-EXEC-006" data-risk="High" style="border-left-color: #f97316"> <div class="threat-id">T-EXEC-006</div> <div class="threat-name">MCPサーバーのコマンドインジェクション</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0051.000</span> <span class="risk-tag" style="background: #f9731612; color: #f97316">High</span> </div> </div> </div> </div><div class="tactic-column"> <div class="tactic-header" style="background: #f97316"> <div class="tactic-name">永続化</div> <div class="tactic-atlas">AML.TA0006</div> </div> <div class="threat-list"> <div class="threat-card" data-threat-id="T-PERSIST-001" data-risk="Critical" style="border-left-color: #ef4444"> <div class="threat-id">T-PERSIST-001</div> <div class="threat-name">スキルベースの永続化</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0010.001</span> <span class="risk-tag" style="background: #ef444412; color: #ef4444">Critical</span> </div> </div><div class="threat-card" data-threat-id="T-PERSIST-002" data-risk="High" style="border-left-color: #f97316"> <div class="threat-id">T-PERSIST-002</div> <div class="threat-name">汚染されたスキルアップデートの永続化</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0010.001</span> <span class="risk-tag" style="background: #f9731612; color: #f97316">High</span> </div> </div><div class="threat-card" data-threat-id="T-PERSIST-003" data-risk="Medium" style="border-left-color: #eab308"> <div class="threat-id">T-PERSIST-003</div> <div class="threat-name">エージェント設定の改ざん</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0010.002</span> <span class="risk-tag" style="background: #eab30812; color: #eab308">Medium</span> </div> </div><div class="threat-card" data-threat-id="T-PERSIST-004" data-risk="High" style="border-left-color: #f97316"> <div class="threat-id">T-PERSIST-004</div> <div class="threat-name">窃取されたトークンの永続化</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0040</span> <span class="risk-tag" style="background: #f9731612; color: #f97316">High</span> </div> </div><div class="threat-card" data-threat-id="T-PERSIST-005" data-risk="Medium" style="border-left-color: #eab308"> <div class="threat-id">T-PERSIST-005</div> <div class="threat-name">プロンプトインジェクションによるメモリ汚染</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0051.000</span> <span class="risk-tag" style="background: #eab30812; color: #eab308">Medium</span> </div> </div> </div> </div><div class="tactic-column"> <div class="tactic-header" style="background: #eab308"> <div class="tactic-name">防御回避</div> <div class="tactic-atlas">AML.TA0007</div> </div> <div class="threat-list"> <div class="threat-card" data-threat-id="T-EVADE-001" data-risk="High" style="border-left-color: #f97316"> <div class="threat-id">T-EVADE-001</div> <div class="threat-name">モデレーションパターンのバイパス</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0043</span> <span class="risk-tag" style="background: #f9731612; color: #f97316">High</span> </div> </div><div class="threat-card" data-threat-id="T-EVADE-002" data-risk="Medium" style="border-left-color: #eab308"> <div class="threat-id">T-EVADE-002</div> <div class="threat-name">コンテンツラッパーの脱出</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0043</span> <span class="risk-tag" style="background: #eab30812; color: #eab308">Medium</span> </div> </div><div class="threat-card" data-threat-id="T-EVADE-003" data-risk="Medium" style="border-left-color: #eab308"> <div class="threat-id">T-EVADE-003</div> <div class="threat-name">承認プロンプトの操作</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0043</span> <span class="risk-tag" style="background: #eab30812; color: #eab308">Medium</span> </div> </div><div class="threat-card" data-threat-id="T-EVADE-004" data-risk="High" style="border-left-color: #f97316"> <div class="threat-id">T-EVADE-004</div> <div class="threat-name">段階的ペイロード配信</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0043</span> <span class="risk-tag" style="background: #f9731612; color: #f97316">High</span> </div> </div> </div> </div><div class="tactic-column"> <div class="tactic-header" style="background: #22c55e"> <div class="tactic-name">探索</div> <div class="tactic-atlas">AML.TA0008</div> </div> <div class="threat-list"> <div class="threat-card" data-threat-id="T-DISC-001" data-risk="Low" style="border-left-color: #22c55e"> <div class="threat-id">T-DISC-001</div> <div class="threat-name">ツールの列挙</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0040</span> <span class="risk-tag" style="background: #22c55e12; color: #22c55e">Low</span> </div> </div><div class="threat-card" data-threat-id="T-DISC-002" data-risk="Medium" style="border-left-color: #eab308"> <div class="threat-id">T-DISC-002</div> <div class="threat-name">セッションデータの抽出</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0040</span> <span class="risk-tag" style="background: #eab30812; color: #eab308">Medium</span> </div> </div><div class="threat-card" data-threat-id="T-DISC-003" data-risk="Medium" style="border-left-color: #eab308"> <div class="threat-id">T-DISC-003</div> <div class="threat-name">システムプロンプトの抽出</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0040</span> <span class="risk-tag" style="background: #eab30812; color: #eab308">Medium</span> </div> </div><div class="threat-card" data-threat-id="T-DISC-004" data-risk="Medium" style="border-left-color: #eab308"> <div class="threat-id">T-DISC-004</div> <div class="threat-name">環境変数の列挙</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0040</span> <span class="risk-tag" style="background: #eab30812; color: #eab308">Medium</span> </div> </div> </div> </div><div class="tactic-column"> <div class="tactic-header" style="background: #3b82f6"> <div class="tactic-name">データ窃取</div> <div class="tactic-atlas">AML.TA0010</div> </div> <div class="threat-list"> <div class="threat-card" data-threat-id="T-EXFIL-001" data-risk="High" style="border-left-color: #f97316"> <div class="threat-id">T-EXFIL-001</div> <div class="threat-name">web_fetchを介したデータ窃取</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0009</span> <span class="risk-tag" style="background: #f9731612; color: #f97316">High</span> </div> </div><div class="threat-card" data-threat-id="T-EXFIL-002" data-risk="Medium" style="border-left-color: #eab308"> <div class="threat-id">T-EXFIL-002</div> <div class="threat-name">不正なメッセージ送信</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0009</span> <span class="risk-tag" style="background: #eab30812; color: #eab308">Medium</span> </div> </div><div class="threat-card" data-threat-id="T-EXFIL-003" data-risk="Critical" style="border-left-color: #ef4444"> <div class="threat-id">T-EXFIL-003</div> <div class="threat-name">スキルを介した認証情報の収集</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0009</span> <span class="risk-tag" style="background: #ef444412; color: #ef4444">Critical</span> </div> </div><div class="threat-card" data-threat-id="T-EXFIL-004" data-risk="High" style="border-left-color: #f97316"> <div class="threat-id">T-EXFIL-004</div> <div class="threat-name">トランスクリプトの窃取</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0009</span> <span class="risk-tag" style="background: #f9731612; color: #f97316">High</span> </div> </div> </div> </div><div class="tactic-column"> <div class="tactic-header" style="background: #ec4899"> <div class="tactic-name">影響</div> <div class="tactic-atlas">AML.TA0011</div> </div> <div class="threat-list"> <div class="threat-card" data-threat-id="T-IMPACT-001" data-risk="Critical" style="border-left-color: #ef4444"> <div class="threat-id">T-IMPACT-001</div> <div class="threat-name">不正なコマンド実行</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0031</span> <span class="risk-tag" style="background: #ef444412; color: #ef4444">Critical</span> </div> </div><div class="threat-card" data-threat-id="T-IMPACT-002" data-risk="High" style="border-left-color: #f97316"> <div class="threat-id">T-IMPACT-002</div> <div class="threat-name">リソース枯渇（DoS）</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0031</span> <span class="risk-tag" style="background: #f9731612; color: #f97316">High</span> </div> </div><div class="threat-card" data-threat-id="T-IMPACT-003" data-risk="Medium" style="border-left-color: #eab308"> <div class="threat-id">T-IMPACT-003</div> <div class="threat-name">レピュテーションの毀損</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0031</span> <span class="risk-tag" style="background: #eab30812; color: #eab308">Medium</span> </div> </div><div class="threat-card" data-threat-id="T-IMPACT-004" data-risk="High" style="border-left-color: #f97316"> <div class="threat-id">T-IMPACT-004</div> <div class="threat-name">データの破壊</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0031</span> <span class="risk-tag" style="background: #f9731612; color: #f97316">High</span> </div> </div><div class="threat-card" data-threat-id="T-IMPACT-005" data-risk="High" style="border-left-color: #f97316"> <div class="threat-id">T-IMPACT-005</div> <div class="threat-name">エージェントを介した金融詐欺</div> <div class="threat-meta"> <span class="atlas-tag">AML.T0031</span> <span class="risk-tag" style="background: #f9731612; color: #f97316">High</span> </div> </div> </div> </div> </div> </div> </section> <section class="chains-section"> <h2 class="section-title">主要な攻撃チェーン</h2> <div class="chains-grid"> <div class="chain-card"> <div class="chain-name">悪意のあるスキルの完全キルチェーン</div> <div class="chain-flow"> <span class="chain-step" data-threat-id="T-RECON-003">T-RECON-003</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-EVADE-001">T-EVADE-001</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-ACCESS-004">T-ACCESS-004</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-EXEC-005">T-EXEC-005</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-PERSIST-001">T-PERSIST-001</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-EXFIL-003">T-EXFIL-003</span> </div> <div class="chain-desc">ClawHubを偵察 → 回避的なスキルを作成 → ユーザーがインストール → コード実行 → 永続化 → 認証情報の収集</div> </div><div class="chain-card"> <div class="chain-name">スキルサプライチェーン攻撃</div> <div class="chain-flow"> <span class="chain-step" data-threat-id="T-ACCESS-005">T-ACCESS-005</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-EVADE-004">T-EVADE-004</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-EXEC-005">T-EXEC-005</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-PERSIST-002">T-PERSIST-002</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-EXFIL-004">T-EXFIL-004</span> </div> <div class="chain-desc">パブリッシャーを侵害 → 段階的ペイロードをプッシュ → アップデート時に実行 → 永続化を維持 → トランスクリプトを窃取</div> </div><div class="chain-card"> <div class="chain-name">プロンプトインジェクションからRCEへ</div> <div class="chain-flow"> <span class="chain-step" data-threat-id="T-ACCESS-006">T-ACCESS-006</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-EXEC-001">T-EXEC-001</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-EVADE-003">T-EVADE-003</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-EXEC-004">T-EXEC-004</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-IMPACT-001">T-IMPACT-001</span> </div> <div class="chain-desc">チャネル経由でアクセス → プロンプトを注入 → 承認を操作 → チェックをバイパス → コマンドを実行</div> </div><div class="chain-card"> <div class="chain-name">間接インジェクションによるデータ窃取</div> <div class="chain-flow"> <span class="chain-step" data-threat-id="T-EXEC-002">T-EXEC-002</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-DISC-004">T-DISC-004</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-EXFIL-001">T-EXFIL-001</span> </div> <div class="chain-desc">取得コンテンツを汚染 → 環境を列挙 → web_fetch経由で窃取</div> </div><div class="chain-card"> <div class="chain-name">トークン窃取による永続的アクセス</div> <div class="chain-flow"> <span class="chain-step" data-threat-id="T-ACCESS-003">T-ACCESS-003</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-PERSIST-004">T-PERSIST-004</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-DISC-002">T-DISC-002</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-EXFIL-002">T-EXFIL-002</span> </div> <div class="chain-desc">トークンを窃取 → アクセスを維持 → セッションデータを抽出 → メッセージ経由で窃取</div> </div><div class="chain-card"> <div class="chain-name">金融詐欺チェーン</div> <div class="chain-flow"> <span class="chain-step" data-threat-id="T-ACCESS-006">T-ACCESS-006</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-EXEC-001">T-EXEC-001</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-DISC-001">T-DISC-001</span><span class="chain-arrow">&rarr;</span><span class="chain-step" data-threat-id="T-IMPACT-005">T-IMPACT-005</span> </div> <div class="chain-desc">チャネルアクセスを取得 → プロンプトを注入 → 金融ツールを列挙 → 詐欺を実行</div> </div> </div> </section> <section class="boundaries-section"> <h2 class="section-title">信頼境界</h2> <div class="boundaries-flow"> <div class="boundary-card"> <div class="boundary-card-header"> <span class="boundary-num">1</span> <div><div class="boundary-card-name">サプライチェーン</div><div class="boundary-card-zone">ClawHub</div></div> </div> <ul class="boundary-controls"><li>スキル公開（セマンティックバージョニング、SKILL.md必須）</li><li>パターンベースのモデレーションフラグ</li><li>VirusTotal Code Insight</li><li>GitHubアカウント年齢の検証</li></ul> </div><div class="boundary-arrow-h"><svg width="24" height="16" viewBox="0 0 24 16"><path d="M0 8h20M16 3l5 5-5 5" stroke="currentColor" stroke-width="2" fill="none"></path></svg></div><div class="boundary-card"> <div class="boundary-card-header"> <span class="boundary-num">2</span> <div><div class="boundary-card-name">チャネルアクセス制御</div><div class="boundary-card-zone">Gateway</div></div> </div> <ul class="boundary-controls"><li>デバイスペアリング（30秒の猶予期間）</li><li>AllowFrom / AllowList検証</li><li>トークン/パスワード/Tailscale認証</li></ul> </div><div class="boundary-arrow-h"><svg width="24" height="16" viewBox="0 0 24 16"><path d="M0 8h20M16 3l5 5-5 5" stroke="currentColor" stroke-width="2" fill="none"></path></svg></div><div class="boundary-card"> <div class="boundary-card-header"> <span class="boundary-num">3</span> <div><div class="boundary-card-name">セッション分離</div><div class="boundary-card-zone">Agent Sessions</div></div> </div> <ul class="boundary-controls"><li>セッションキー = agent:channel:peer</li><li>エージェントごとのツールポリシー</li><li>トランスクリプトのログ記録</li></ul> </div><div class="boundary-arrow-h"><svg width="24" height="16" viewBox="0 0 24 16"><path d="M0 8h20M16 3l5 5-5 5" stroke="currentColor" stroke-width="2" fill="none"></path></svg></div><div class="boundary-adjacent"> <div class="boundary-card"> <div class="boundary-card-header"> <span class="boundary-num">4</span> <div><div class="boundary-card-name">ツール実行</div><div class="boundary-card-zone">Execution Sandbox</div></div> </div> <ul class="boundary-controls"><li>Dockerサンドボックスまたはホスト（実行承認）</li><li>Nodeリモート実行</li><li>SSRF防御（DNSピンニング + IPブロック）</li></ul> </div><div class="boundary-card"> <div class="boundary-card-header"> <span class="boundary-num">5</span> <div><div class="boundary-card-name">外部コンテンツ</div><div class="boundary-card-zone">Fetched URLs / Emails / Webhooks</div></div> </div> <ul class="boundary-controls"><li>外部コンテンツのラッピング（XMLタグ）</li><li>セキュリティ通知のインジェクション</li></ul> </div> </div> </div> </section> <div class="detail-overlay" id="detailOverlay"> <div class="detail-panel"> <div class="detail-header"> <div><div class="detail-id" id="detailId"></div><div class="detail-title" id="detailTitle"></div><div class="detail-badges" id="detailBadges"></div></div> <button class="close-btn" id="closeBtn">&times;</button> </div> <div class="detail-body" id="detailBody"></div> </div> </div> <footer class="tm-footer"> <div class="footer-atlas"> <p>ベース <a href="https://atlas.mitre.org/" target="_blank">MITRE ATLAS（AIシステムに対する敵対的脅威ランドスケープ）</a></p> <p class="footer-atlas-sub">ATLASはMITREとAIセキュリティコミュニティの協力により維持されています</p> </div> <div class="footer-links"> <a href="https://atlas.mitre.org/techniques/" target="_blank">ATLASテクニック</a><span class="footer-sep">|</span> <a href="https://atlas.mitre.org/tactics/" target="_blank">ATLAS戦術</a><span class="footer-sep">|</span> <a href="https://github.com/openclaw/trust" target="_blank">コントリビュートする</a> </div> <div class="footer-contact"><p>セキュリティの問題は以下に報告してください <a href="mailto:security@openclaw.ai">security@openclaw.ai</a></p></div> <p class="footer-version">OpenClaw 脅威モデル v1.0-draft</p> </footer>  </main> <script>(function(){const threats = [{"id":"T-RECON-001","name":"エージェントエンドポイントの発見","tactic":"Reconnaissance","atlas":"AML.T0006","risk":"Medium","category":"recon","description":"攻撃者が公開されたOpenClaw Gatewayエンドポイントをスキャンする","attackVector":"ネットワークスキャン、Shodanクエリ、DNS列挙","affected":"Gateway、公開されたAPIエンドポイント","mitigations":"Tailscale認証オプション、デフォルトでループバックにバインド","residualRisk":"公開Gatewayは発見可能","recommendations":"セキュアなデプロイメントを文書化、発見用エンドポイントにレート制限を追加"},{"id":"T-RECON-002","name":"チャネル統合のプロービング","tactic":"Reconnaissance","atlas":"AML.T0006","risk":"Low","category":"recon","description":"攻撃者がメッセージングチャネルを調査し、AI管理のアカウントを特定する","attackVector":"テストメッセージの送信、レスポンスパターンの観察","affected":"すべてのチャネル統合","mitigations":"特定の対策なし","residualRisk":"発見だけでは限定的な価値","recommendations":"レスポンスタイミングのランダム化を検討"},{"id":"T-RECON-003","name":"スキル機能の偵察","tactic":"Reconnaissance","atlas":"AML.T0006","risk":"Low","category":"recon","description":"攻撃者がClawHubを分析し、高価値ターゲットや人気スキルを特定する","attackVector":"ClawHubの閲覧、ダウンロード統計の分析、機密権限を持つスキルの特定","affected":"ClawHubの公開リスティング","mitigations":"なし - 公開はデザインによるもの","residualRisk":"攻撃者がターゲットの優先順位を決定可能","recommendations":"不審な閲覧パターンの監視、APIアクセスのレート制限"},{"id":"T-ACCESS-001","name":"ペアリングコードの傍受","tactic":"Initial Access","atlas":"AML.T0040","risk":"Medium","category":"access","description":"攻撃者が30秒の有効期間中にペアリングコードを傍受する","attackVector":"覗き見、ネットワークスニッフィング、ソーシャルエンジニアリング","affected":"デバイスペアリングシステム","mitigations":"30秒の有効期限、既存チャネル経由でのコード送信","residualRisk":"有効期間は悪用可能","recommendations":"有効期間の短縮、確認ステップの追加"},{"id":"T-ACCESS-002","name":"AllowFromのなりすまし","tactic":"Initial Access","atlas":"AML.T0040","risk":"Medium","category":"access","description":"攻撃者がチャネル内で許可された送信者のアイデンティティをなりすます","attackVector":"電話番号のなりすまし、ユーザー名の偽装（チャネルに依存）","affected":"チャネルごとのAllowFrom検証","mitigations":"チャネル固有のアイデンティティ検証","residualRisk":"一部のチャネルはなりすましに脆弱","recommendations":"チャネル固有のリスクを文書化、可能な場合は暗号学的検証を追加"},{"id":"T-ACCESS-003","name":"トークンの窃取","tactic":"Initial Access","atlas":"AML.T0040","risk":"High","category":"access","description":"攻撃者が設定ファイルから認証トークンを窃取する","attackVector":"マルウェア、不正なデバイスアクセス、設定バックアップの漏洩","affected":"~/.openclaw/credentials/、設定ストレージ","mitigations":"ファイルパーミッション","residualRisk":"トークンが平文で保存されている","recommendations":"トークンの保存時暗号化を実装、トークンローテーションを追加"},{"id":"T-ACCESS-004","name":"悪意のあるスキルによるエントリポイント","tactic":"Initial Access","atlas":"AML.T0010.001","risk":"Critical","category":"access","description":"ユーザーがClawHubから悪意のあるスキルをインストールし、攻撃者に初期アクセスを許可する","attackVector":"ソーシャルエンジニアリング、タイポスクワッティング、人気スキルの偽造、SEO操作","affected":"ClawHubのディスカバリー、スキルインストールフロー","mitigations":"GitHubアカウント年齢の検証、ダウンロード統計の可視性","residualRisk":"ユーザーが検証せずにインストールする可能性","recommendations":"目立つセキュリティ警告、認証済みパブリッシャーバッジ、インストール確認"},{"id":"T-ACCESS-005","name":"侵害されたスキルのアップデート","tactic":"Initial Access","atlas":"AML.T0010.001","risk":"High","category":"access","description":"攻撃者が正規のスキルを侵害し、既存ユーザーに悪意のあるアップデートをプッシュする","attackVector":"スキルパブリッシャーのアカウント乗っ取り、ソーシャルエンジニアリング、認証情報の窃取","affected":"ClawHubのアップデートメカニズム、インストール済みスキル","mitigations":"バージョンフィンガープリンティング","residualRisk":"信頼されたスキルが攻撃ベクトルになる","recommendations":"アップデートの署名、パブリッシャーの2FA要件、アップデート差分レビュー"},{"id":"T-ACCESS-006","name":"チャネル経由のプロンプトインジェクション","tactic":"Initial Access","atlas":"AML.T0051.000","risk":"High","category":"access","description":"攻撃者がメッセージングチャネルを通じて悪意のあるプロンプトを送信し、初期アクセスを取得する","attackVector":"エージェント管理のチャネル（WhatsApp、Telegram、Discord）へのダイレクトメッセージ","affected":"すべてのチャネル統合","mitigations":"AllowFromリスト、ペアリング要件","residualRisk":"許可リストの設定ミス、ソーシャルエンジニアリングによる追加","recommendations":"デフォルト拒否のチャネルアクセス、新規送信者の監査ログ"},{"id":"T-EXEC-001","name":"直接プロンプトインジェクション","tactic":"Execution","atlas":"AML.T0051.000","risk":"Critical","category":"execution","description":"攻撃者が巧みに作成されたプロンプトを送信し、エージェントの動作を操作する","attackVector":"敵対的な指示を含むチャネルメッセージ","affected":"エージェントLLM、すべての入力サーフェス","mitigations":"パターン検出、外部コンテンツのラッピング","residualRisk":"検出のみでブロックなし。高度な攻撃はバイパス可能","recommendations":"多層防御の実装、出力バリデーション、機密操作のユーザー確認"},{"id":"T-EXEC-002","name":"間接プロンプトインジェクション","tactic":"Execution","atlas":"AML.T0051.001","risk":"High","category":"execution","description":"攻撃者が取得されたコンテンツに悪意のある指示を埋め込む","attackVector":"悪意のあるURL、汚染されたメール、侵害されたWebhook","affected":"web_fetch、メール取り込み、外部データソース","mitigations":"XMLタグとセキュリティ通知によるコンテンツのラッピング","residualRisk":"LLMがラッパー指示を無視する可能性","recommendations":"コンテンツのサニタイズを実装、実行コンテキストの分離"},{"id":"T-EXEC-003","name":"ツール引数インジェクション","tactic":"Execution","atlas":"AML.T0051.000","risk":"High","category":"execution","description":"攻撃者がプロンプトインジェクションを通じてツール引数を操作する","attackVector":"ツールパラメータ値に影響を与える巧みなプロンプト","affected":"すべてのツール呼び出し","mitigations":"危険なコマンドの実行承認","residualRisk":"ユーザーの判断に依存","recommendations":"引数バリデーションの実装、パラメータ化されたツール呼び出し"},{"id":"T-EXEC-004","name":"実行承認のバイパス","tactic":"Execution","atlas":"AML.T0043","risk":"High","category":"execution","description":"攻撃者が承認許可リストをバイパスするコマンドを作成する","attackVector":"コマンドの難読化、エイリアスの悪用、パスの操作","affected":"exec-approvals.ts、コマンド許可リスト","mitigations":"許可リスト + askモード","residualRisk":"コマンドのサニタイズなし","recommendations":"コマンドの正規化を実装、ブロックリストの拡充"},{"id":"T-EXEC-005","name":"悪意のあるスキルコードの実行","tactic":"Execution","atlas":"AML.T0010.001","risk":"Critical","category":"execution","description":"悪意のあるスキルがエージェントによってロードされた際に任意のコードを実行する","attackVector":"難読化された悪意のあるコードを含むスキルがロードまたは呼び出し時に実行される","affected":"スキルランタイム、エージェントプロセス、ホストシステム","mitigations":"パターンベースのモデレーション（容易にバイパス可能）","residualRisk":"スキルは完全なエージェント権限で実行され、サンドボックスなし","recommendations":"VirusTotal Code Insight、スキルのサンドボックス化、ケイパビリティベースのパーミッション"},{"id":"T-EXEC-006","name":"MCPサーバーのコマンドインジェクション","tactic":"Execution","atlas":"AML.T0051.000","risk":"High","category":"execution","description":"攻撃者がMCPサーバーを悪用し、ツール呼び出しを通じてコマンドを実行する","attackVector":"プロンプトインジェクションにより、エージェントが悪意のある引数でMCPツールを呼び出す","affected":"MCPサーバー統合、外部ツールプロバイダー","mitigations":"ツールポリシーの適用","residualRisk":"MCPサーバーが広範な権限を持つ可能性","recommendations":"MCPサーバーの許可リスト化、引数バリデーション、最小権限のMCP設定"},{"id":"T-PERSIST-001","name":"スキルベースの永続化","tactic":"Persistence","atlas":"AML.T0010.001","risk":"Critical","category":"persistence","description":"悪意のあるスキルがインストールされたまま残り、エージェントの再起動をまたいで再実行される","attackVector":"スキルがユーザー設定に永続化し、エージェント起動時に自動ロードされる","affected":"スキルのインストール、エージェントの起動","mitigations":"なし - スキルの永続化は設計上の仕様","residualRisk":"悪意のあるスキルが再起動やアップデート後も存続する","recommendations":"ロード時のスキル完全性検証、定期的な再スキャン、削除ツール"},{"id":"T-PERSIST-002","name":"汚染されたスキルアップデートの永続化","tactic":"Persistence","atlas":"AML.T0010.001","risk":"High","category":"persistence","description":"正規スキルへの悪意のあるアップデートが永続的アクセスを維持する","attackVector":"自動アップデートが侵害されたバージョンを取得し、セッションをまたいで永続化する","affected":"ClawHubのバージョニング、自動アップデートフロー","mitigations":"バージョンフィンガープリンティング","residualRisk":"信頼されたスキルが永続的なバックドアとなる","recommendations":"アップデートの署名、バージョンピンニング、アップデート通知"},{"id":"T-PERSIST-003","name":"エージェント設定の改ざん","tactic":"Persistence","atlas":"AML.T0010.002","risk":"Medium","category":"persistence","description":"攻撃者がエージェント設定を変更してアクセスを永続化する","attackVector":"設定ファイルの変更、侵害されたスキルを通じた設定のインジェクション","affected":"エージェント設定、ツールポリシー、許可リスト","mitigations":"ファイルパーミッション","residualRisk":"ローカルアクセスまたは事前の侵害が必要","recommendations":"設定の完全性検証、設定変更の監査ログ"},{"id":"T-PERSIST-004","name":"窃取されたトークンの永続化","tactic":"Persistence","atlas":"AML.T0040","risk":"High","category":"persistence","description":"攻撃者が窃取された認証トークンを使用してアクセスを維持する","attackVector":"T-ACCESS-003で窃取されたトークンが継続的アクセスに使用される","affected":"Gateway認証、APIアクセス","mitigations":"なし - トークンはデフォルトで期限切れにならない","residualRisk":"トークンが手動で失効されるまで攻撃者がアクセスを保持","recommendations":"トークンの有効期限、ローテーションポリシー、異常検出"},{"id":"T-PERSIST-005","name":"プロンプトインジェクションによるメモリ汚染","tactic":"Persistence","atlas":"AML.T0051.000","risk":"Medium","category":"persistence","description":"攻撃者がエージェントのメモリ/コンテキストに永続する指示を注入する","attackVector":"後続のインタラクションにおけるエージェントの動作を変更するプロンプトの注入","affected":"セッションコンテキスト、エージェントのメモリシステム","mitigations":"送信者ごとのセッション分離","residualRisk":"セッション内での永続化が発生する可能性","recommendations":"コンテキストのサニタイズ、メモリの境界設定、セッションタイムアウト"},{"id":"T-EVADE-001","name":"モデレーションパターンのバイパス","tactic":"Defense Evasion","atlas":"AML.T0043","risk":"High","category":"evasion","description":"攻撃者がモデレーションパターンを回避するスキルコンテンツを作成する","attackVector":"Unicode同形文字、エンコーディングトリック、動的ロード、コードの難読化","affected":"ClawHub moderation.ts","mitigations":"パターンベースのFLAG_RULES","residualRisk":"単純な正規表現は容易にバイパス可能","recommendations":"振る舞い分析の追加（VirusTotal Code Insight）、ASTベースの検出"},{"id":"T-EVADE-002","name":"コンテンツラッパーの脱出","tactic":"Defense Evasion","atlas":"AML.T0043","risk":"Medium","category":"evasion","description":"攻撃者がXMLラッパーコンテキストを脱出するコンテンツを作成する","attackVector":"タグの操作、コンテキストの混乱、指示のオーバーライド","affected":"外部コンテンツのラッピング","mitigations":"XMLタグ + セキュリティ通知","residualRisk":"新しい脱出方法が定期的に発見される","recommendations":"多層ラッパー、出力側のバリデーション"},{"id":"T-EVADE-003","name":"承認プロンプトの操作","tactic":"Defense Evasion","atlas":"AML.T0043","risk":"Medium","category":"evasion","description":"攻撃者が承認プロンプトで無害に見えるリクエストを作成する","attackVector":"誤解を招くコマンドの説明、長いコマンド内への悪意のあるフラグの隠蔽","affected":"実行承認のUI、ユーザーの意思決定","mitigations":"承認プロンプトに完全なコマンドを表示","residualRisk":"ユーザーが慎重にレビューせずに承認する可能性","recommendations":"危険なフラグのハイライト、コマンドの要約、リスクスコアリング"},{"id":"T-EVADE-004","name":"段階的ペイロード配信","tactic":"Defense Evasion","atlas":"AML.T0043","risk":"High","category":"evasion","description":"スキルが初期スキャン通過後に悪意のあるペイロードをダウンロードする","attackVector":"クリーンなスキルがモデレーションを通過し、ランタイム時に悪意のあるコードを取得する","affected":"ClawHubスキャン、スキルランタイム","mitigations":"なし - ランタイムの取得は監視されていない","residualRisk":"スキャンは初期コードのみをチェック","recommendations":"ランタイムのネットワーク監視、スキルのアウトバウンド取得の制限"},{"id":"T-DISC-001","name":"ツールの列挙","tactic":"Discovery","atlas":"AML.T0040","risk":"Low","category":"discovery","description":"攻撃者がプロンプティングを通じて利用可能なツールを列挙する","attackVector":"'どんなツールがありますか？'のようなクエリ","affected":"エージェントのツールレジストリ","mitigations":"特定の対策なし","residualRisk":"ツールは一般的に公開文書化されている","recommendations":"ツールの可視性制御を検討"},{"id":"T-DISC-002","name":"セッションデータの抽出","tactic":"Discovery","atlas":"AML.T0040","risk":"Medium","category":"discovery","description":"攻撃者がセッションコンテキストから機密データを抽出する","attackVector":"'前に何を話しましたか？'のようなクエリ、コンテキストプロービング","affected":"セッションのトランスクリプト、コンテキストウィンドウ","mitigations":"送信者ごとのセッション分離","residualRisk":"セッション内のデータはアクセス可能","recommendations":"コンテキスト内の機密データマスキングを実装"},{"id":"T-DISC-003","name":"システムプロンプトの抽出","tactic":"Discovery","atlas":"AML.T0040","risk":"Medium","category":"discovery","description":"攻撃者がシステムプロンプトを抽出し、エージェントの機能と制限を把握する","attackVector":"エージェントに指示を開示させるプロンプトインジェクション","affected":"エージェントのシステムプロンプト、セキュリティポリシー","mitigations":"LLMの指示追従","residualRisk":"システムプロンプトは創造的なプロンプトで抽出可能なことが多い","recommendations":"システムプロンプトの堅牢化、抽出検出"},{"id":"T-DISC-004","name":"環境変数の列挙","tactic":"Discovery","atlas":"AML.T0040","risk":"Medium","category":"discovery","description":"攻撃者が環境変数とシステム設定を列挙する","attackVector":"プロンプトインジェクションにより、エージェントがenv、printenvを実行するか、設定ファイルを読み取る","affected":"ホスト環境、環境変数内の認証情報","mitigations":"実行承認","residualRisk":"承認されたコマンドが機密情報を漏洩する可能性","recommendations":"機密環境変数のフィルタリング、出力のマスキング"},{"id":"T-EXFIL-001","name":"web_fetchを介したデータ窃取","tactic":"Exfiltration","atlas":"AML.T0009","risk":"High","category":"exfil","description":"攻撃者がエージェントに外部URLへのデータ送信を指示してデータを窃取する","attackVector":"プロンプトインジェクションにより、エージェントが攻撃者のサーバーにデータをPOSTする","affected":"web_fetchツール","mitigations":"内部ネットワークに対するSSRFブロック","residualRisk":"外部URLは許可されている","recommendations":"URL許可リストの実装、データ分類に基づく制御"},{"id":"T-EXFIL-002","name":"不正なメッセージ送信","tactic":"Exfiltration","atlas":"AML.T0009","risk":"Medium","category":"exfil","description":"攻撃者がエージェントに機密データを含むメッセージを送信させる","attackVector":"プロンプトインジェクションにより、エージェントが攻撃者にメッセージを送信する","affected":"メッセージツール、チャネル統合","mitigations":"アウトバウンドメッセージのゲーティング","residualRisk":"ゲーティングがバイパスされる可能性","recommendations":"新規受信者への明示的な確認を要求"},{"id":"T-EXFIL-003","name":"スキルを介した認証情報の収集","tactic":"Exfiltration","atlas":"AML.T0009","risk":"Critical","category":"exfil","description":"悪意のあるスキルがエージェントのコンテキストと環境から認証情報を収集する","attackVector":"スキルコードが環境変数、設定ファイル、APIキーを読み取る","affected":"スキル実行環境、~/.openclaw/","mitigations":"スキルに対する特定の対策なし","residualRisk":"スキルはエージェント権限で実行される","recommendations":"スキルのサンドボックス化、認証情報の分離、ケイパビリティベースのアクセス制御"},{"id":"T-EXFIL-004","name":"トランスクリプトの窃取","tactic":"Exfiltration","atlas":"AML.T0009","risk":"High","category":"exfil","description":"攻撃者が機密データを含む会話のトランスクリプトを窃取する","attackVector":"スキルまたはプロンプトインジェクションがトランスクリプトファイルを読み取り、送信する","affected":"セッションのトランスクリプト、~/.openclaw/sessions/","mitigations":"ファイルパーミッション","residualRisk":"スキルがトランスクリプトファイルを読み取り可能","recommendations":"トランスクリプトの暗号化、スキルのファイルシステム分離"},{"id":"T-IMPACT-001","name":"不正なコマンド実行","tactic":"Impact","atlas":"AML.T0031","risk":"Critical","category":"impact","description":"攻撃者がユーザーのシステム上で任意のコマンドを実行する","attackVector":"プロンプトインジェクションと実行承認バイパスの組み合わせ","affected":"Bashツール、コマンド実行、ホストシステム","mitigations":"実行承認、Dockerサンドボックスオプション","residualRisk":"サンドボックスなしのホスト実行","recommendations":"デフォルトでサンドボックスを使用、承認UXの改善"},{"id":"T-IMPACT-002","name":"リソース枯渇（DoS）","tactic":"Impact","atlas":"AML.T0031","risk":"High","category":"impact","description":"攻撃者がAPIクレジットまたは計算リソースを枯渇させる","attackVector":"自動化されたメッセージフラッディング、高コストなツール呼び出し、無限ループ","affected":"Gateway、エージェントセッション、APIプロバイダー、ユーザーの課金","mitigations":"なし","residualRisk":"レート制限なし","recommendations":"送信者ごとのレート制限、費用バジェット、サーキットブレーカーの実装"},{"id":"T-IMPACT-003","name":"レピュテーションの毀損","tactic":"Impact","atlas":"AML.T0031","risk":"Medium","category":"impact","description":"攻撃者がエージェントに有害または攻撃的なコンテンツを送信させる","attackVector":"プロンプトインジェクションにより、連絡先への不適切な返信が発生する","affected":"出力生成、チャネルメッセージ、ユーザーのレピュテーション","mitigations":"LLMプロバイダーのコンテンツポリシー","residualRisk":"プロバイダーのフィルターは完全ではない","recommendations":"出力フィルタリングレイヤー、ユーザーコントロール、メッセージレビューキュー"},{"id":"T-IMPACT-004","name":"データの破壊","tactic":"Impact","atlas":"AML.T0031","risk":"High","category":"impact","description":"攻撃者がエージェントにユーザーデータの削除や破損を行わせる","attackVector":"プロンプトインジェクションにより、rm、フォーマット、破壊的なデータベース操作が実行される","affected":"ユーザーファイル、データベース、設定","mitigations":"破壊的コマンドの実行承認","residualRisk":"承認された破壊的コマンドが偽装される可能性","recommendations":"破壊的コマンドの確認、バックアップの推奨、元に戻す機能"},{"id":"T-IMPACT-005","name":"エージェントを介した金融詐欺","tactic":"Impact","atlas":"AML.T0031","risk":"High","category":"impact","description":"攻撃者がエージェントを利用して不正な金融取引を実行する","attackVector":"プロンプトインジェクションにより、エージェントが金融APIやサービスとインタラクションする","affected":"金融連携、決済ツール","mitigations":"ツール固有のポリシー","residualRisk":"エージェントが金融ツールへのアクセス権を持つ可能性","recommendations":"金融操作の確認、取引限度額、独立した承認フロー"}];
+const detailLabels = {"description":"説明","attackVector":"攻撃ベクトル","affected":"影響を受けるコンポーネント","mitigations":"現在の緩和策","residualRisk":"残留リスク","recommendations":"推奨事項","riskSuffix":"リスク"};
+
+    function getRiskColor(risk) {
+      switch (risk) { case 'Critical': return '#ef4444'; case 'High': return '#f97316'; case 'Medium': return '#eab308'; case 'Low': return '#22c55e'; default: return '#6b7280'; }
+    }
+    function showThreatDetail(threatId) {
+      var threat = threats.find(function(t) { return t.id === threatId; });
+      if (!threat) return;
+      document.getElementById('detailId').textContent = threat.id + ' \u2022 ' + threat.tactic;
+      document.getElementById('detailTitle').textContent = threat.name;
+      var rc = getRiskColor(threat.risk);
+      document.getElementById('detailBadges').innerHTML = '<span class="detail-badge" style="background:' + rc + '12;color:' + rc + '">' + threat.risk + ' ' + detailLabels.riskSuffix + '</span><a href="https://atlas.mitre.org/techniques/' + threat.atlas + '" target="_blank" class="detail-badge atlas-link" style="background:rgba(255,90,54,0.08)">' + threat.atlas + '</a>';
+      document.getElementById('detailBody').innerHTML = '<div class="detail-section"><div class="detail-label">' + detailLabels.description + '</div><div class="detail-value">' + threat.description + '</div></div><div class="detail-section"><div class="detail-label">' + detailLabels.attackVector + '</div><div class="detail-value">' + threat.attackVector + '</div></div><div class="detail-section"><div class="detail-label">' + detailLabels.affected + '</div><div class="detail-value">' + threat.affected + '</div></div><div class="detail-section"><div class="detail-label">' + detailLabels.mitigations + '</div><div class="detail-value">' + threat.mitigations + '</div></div><div class="detail-section"><div class="detail-label">' + detailLabels.residualRisk + '</div><div class="detail-value">' + threat.residualRisk + '</div></div><div class="detail-section"><div class="detail-label">' + detailLabels.recommendations + '</div><div class="detail-value">' + threat.recommendations + '</div></div>';
+      document.getElementById('detailOverlay').classList.add('active');
+      document.querySelectorAll('.threat-card').forEach(function(c) { c.classList.remove('selected'); });
+      var sel = document.querySelector('[data-threat-id="' + threatId + '"]');
+      if (sel) sel.classList.add('selected');
+    }
+    function closeDetail() { document.getElementById('detailOverlay').classList.remove('active'); document.querySelectorAll('.threat-card').forEach(function(c) { c.classList.remove('selected'); }); }
+    document.querySelectorAll('.threat-card').forEach(function(c) { c.addEventListener('click', function() { showThreatDetail(c.dataset.threatId); }); });
+    document.querySelectorAll('.chain-step').forEach(function(s) { s.addEventListener('click', function() { showThreatDetail(s.dataset.threatId); }); });
+    var overlay = document.getElementById('detailOverlay');
+    if (overlay) overlay.addEventListener('click', function(e) { if (e.target === overlay) closeDetail(); });
+    var closeBtn = document.getElementById('closeBtn');
+    if (closeBtn) closeBtn.addEventListener('click', closeDetail);
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeDetail(); });
+
+    // Fade hint: remove right fade when scrolled to end
+    var mc = document.querySelector('.matrix-container');
+    if (mc) {
+      mc.addEventListener('scroll', function() {
+        var atEnd = mc.scrollLeft + mc.clientWidth >= mc.scrollWidth - 4;
+        mc.classList.toggle('scrolled-end', atEnd);
+      });
+    }
+  })();</script> </body> </html>
