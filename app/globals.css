@@ -1,6 +1,5 @@
 :root {
   --bg: #070a12;
-  --bg-soft: #0c1220;
   --card: rgba(255, 255, 255, 0.04);
   --text: #f3f7ff;
   --muted: #9eaccb;
@@ -249,15 +248,11 @@ h2 {
 }
 
 .code-content {
-  display: none;
   padding: 0.95rem;
 }
 
-.code-content.active {
-  display: block;
-}
-
 .code-line {
+  width: 100%;
   margin: 0.5rem 0;
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -268,22 +263,19 @@ h2 {
   gap: 0.65rem;
   overflow-x: auto;
   cursor: copy;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease;
+  text-align: left;
 }
 
 .code-line:hover {
   border-color: rgba(255, 255, 255, 0.28);
 }
 
-.code-line.copied {
-  border-color: rgba(109, 246, 178, 0.85);
-  box-shadow: 0 0 0 1px rgba(109, 246, 178, 0.25) inset;
-}
-
 .prompt {
   color: var(--ok);
   font-weight: 700;
   user-select: none;
+  flex: 0 0 auto;
 }
 
 code {
@@ -331,25 +323,6 @@ code {
   gap: 0.55rem;
 }
 
-.press-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.8rem;
-  margin-bottom: 1.5rem;
-}
-
-.press-card h3 {
-  font-size: 1.14rem;
-}
-
-.press-label {
-  text-transform: uppercase;
-  letter-spacing: 0.11em;
-  color: #b7c7ee;
-  font-size: 0.72rem;
-  margin-bottom: 0.4rem;
-}
-
 .links-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -390,10 +363,6 @@ code {
   .feature-grid,
   .links-grid {
     grid-template-columns: 1fr 1fr;
-  }
-
-  .press-grid {
-    grid-template-columns: 1fr;
   }
 }
 

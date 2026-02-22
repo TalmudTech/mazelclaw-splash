@@ -1,23 +1,31 @@
-# MazelClaw Splash
+# MazelClaw Splash (Next.js)
 
-One-page splash site for **MazelClaw**.
+Next.js one-page splash site for **MazelClaw**, styled to closely match openclaw.ai with MazelClaw branding.
 
-## Local preview
+## Local
 
 ```bash
 cd /Users/navi/.openclaw-meme1/mazelclaw
-python3 -m http.server 8081
-# open http://localhost:8081
+npm install
+npm run dev
+```
+
+Open http://localhost:3000
+
+## Build static export (for Cloudflare Pages)
+
+```bash
+npm run build
+# static output in ./out
 ```
 
 ## Deploy
 
-This is a static site (`index.html` + `styles.css`) and can be deployed on:
-- GitHub Pages
-- Vercel
-- Netlify
-- Cloudflare Pages
+```bash
+wrangler pages deploy out --project-name mazelclaw --branch main
+```
 
-## Main project repo
+## Repos
 
-- https://github.com/TalmudTech/mazelclaw
+- Main: https://github.com/TalmudTech/mazelclaw
+- Splash: https://github.com/TalmudTech/mazelclaw-splash
