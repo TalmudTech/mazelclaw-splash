@@ -6,7 +6,7 @@
     <title>MazelClaw — Personal AI Assistant</title>
     <meta
       name="description"
-      content="MazelClaw is a personal AI assistant you control. Chat with it from Telegram, WhatsApp, or Discord and let it actually do real work."
+      content="MazelClaw is a personal AI assistant that actually does things: runs tools, automates workflows, and works from chat apps you already use."
     />
     <meta property="og:title" content="MazelClaw — Personal AI Assistant" />
     <meta
@@ -19,111 +19,170 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div class="bg-grid"></div>
+    <div class="bg-grid" aria-hidden="true"></div>
+
     <header class="topbar container">
-      <a class="brand" href="#">
+      <a class="brand" href="#" aria-label="MazelClaw home">
         <img src="./assets/mazelclaw-logo-text.png" alt="MazelClaw" />
       </a>
-      <nav class="actions">
-        <a class="btn btn-ghost" href="https://github.com/TalmudTech/mazelclaw" target="_blank" rel="noopener">GitHub Repo</a>
-        <a class="btn btn-primary" href="https://github.com/TalmudTech/mazelclaw" target="_blank" rel="noopener">Get Started</a>
+      <nav class="top-actions">
+        <a class="btn btn-ghost" href="https://docs.openclaw.ai" target="_blank" rel="noopener">Docs</a>
+        <a class="btn btn-ghost" href="https://github.com/TalmudTech/mazelclaw" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn btn-primary" href="#quickstart">Quick Start</a>
       </nav>
     </header>
 
     <main>
       <section class="hero container">
-        <p class="kicker">Open source · self-hosted · always-on</p>
+        <p class="kicker">open source · self-hosted · always-on</p>
         <h1>The AI that actually does things.</h1>
         <p class="subtitle">
-          Clears inboxes, manages calendars, runs terminal tasks, controls your browser,
-          and works from chat apps you already use.
+          Clears your inbox, drafts replies, runs terminal workflows, controls browsers, and handles real tasks from
+          Telegram, WhatsApp, Discord, and more.
         </p>
         <div class="hero-cta">
-          <a class="btn btn-primary" href="https://github.com/TalmudTech/mazelclaw" target="_blank" rel="noopener">View MazelClaw on GitHub</a>
-          <a class="btn btn-ghost" href="#quickstart">Quick Start</a>
+          <a class="btn btn-primary" href="https://github.com/TalmudTech/mazelclaw" target="_blank" rel="noopener">View MazelClaw Repo</a>
+          <a class="btn btn-ghost" href="https://github.com/TalmudTech/mazelclaw-splash" target="_blank" rel="noopener">View Splash Repo</a>
         </div>
       </section>
 
-      <section id="quickstart" class="container card quickstart">
-        <h2>Quick Start</h2>
-        <div class="code">
-          <span class="prompt">$</span>
-          <code>git clone https://github.com/TalmudTech/mazelclaw.git</code>
+      <section class="container social-proof">
+        <div class="pill">Runs where you run: Mac · Linux · cloud</div>
+        <div class="pill">Talk via Telegram · WhatsApp · Discord · Slack · Signal</div>
+        <div class="pill">Multi-agent workflows + memory + skills</div>
+      </section>
+
+      <section class="testimonials" aria-label="community quotes">
+        <div class="marquee">
+          <div class="marquee-track">
+            <article class="quote">“This feels like a real AI teammate, not just a chatbot.”</article>
+            <article class="quote">“I can trigger actual automation from my phone in seconds.”</article>
+            <article class="quote">“Open architecture + chat control is exactly what I wanted.”</article>
+            <article class="quote">“Memory + tools + background tasks = serious leverage.”</article>
+            <article class="quote">“Finally an assistant I can actually customize end-to-end.”</article>
+            <article class="quote">“This feels like a real AI teammate, not just a chatbot.”</article>
+            <article class="quote">“I can trigger actual automation from my phone in seconds.”</article>
+            <article class="quote">“Open architecture + chat control is exactly what I wanted.”</article>
+            <article class="quote">“Memory + tools + background tasks = serious leverage.”</article>
+            <article class="quote">“Finally an assistant I can actually customize end-to-end.”</article>
+          </div>
         </div>
-        <div class="code">
-          <span class="prompt">$</span>
-          <code>cd mazelclaw && pnpm install && pnpm run build</code>
-        </div>
-        <div class="code">
-          <span class="prompt">$</span>
-          <code>pnpm run openclaw onboard</code>
+      </section>
+
+      <section id="quickstart" class="container quickstart">
+        <h2><span class="accent">⟩</span> Quick Start</h2>
+
+        <div class="code-window">
+          <div class="code-header">
+            <div class="dots" aria-hidden="true"><span></span><span></span><span></span></div>
+            <div class="mode-switch" role="tablist" aria-label="install mode">
+              <button class="mode-btn active" data-mode="clone" role="tab" aria-selected="true">Clone</button>
+              <button class="mode-btn" data-mode="npm" role="tab" aria-selected="false">npm</button>
+              <button class="mode-btn" data-mode="hackable" role="tab" aria-selected="false">Hackable</button>
+            </div>
+          </div>
+
+          <div class="code-content active" data-content="clone">
+            <div class="code-line"><span class="prompt">$</span><code>git clone https://github.com/TalmudTech/mazelclaw.git</code></div>
+            <div class="code-line"><span class="prompt">$</span><code>cd mazelclaw && pnpm install && pnpm run build</code></div>
+            <div class="code-line"><span class="prompt">$</span><code>pnpm run openclaw onboard</code></div>
+          </div>
+
+          <div class="code-content" data-content="npm">
+            <div class="code-line"><span class="prompt">$</span><code>npm i -g openclaw</code></div>
+            <div class="code-line"><span class="prompt">$</span><code>openclaw onboard</code></div>
+            <div class="code-line"><span class="prompt">$</span><code># switch model / channels in your generated config</code></div>
+          </div>
+
+          <div class="code-content" data-content="hackable">
+            <div class="code-line"><span class="prompt">$</span><code>git clone https://github.com/TalmudTech/mazelclaw.git</code></div>
+            <div class="code-line"><span class="prompt">$</span><code>cd mazelclaw && pnpm install</code></div>
+            <div class="code-line"><span class="prompt">$</span><code>pnpm run dev</code></div>
+          </div>
         </div>
       </section>
 
       <section class="container features">
-        <h2>What It Does</h2>
-        <div class="grid-3">
+        <h2><span class="accent">⟩</span> What It Does</h2>
+        <div class="feature-grid">
           <article class="card">
             <h3>Runs on your machine</h3>
-            <p>Mac, Linux, or cloud VM. Keep your context and data under your control.</p>
+            <p>Keep your data local and choose your own model providers.</p>
           </article>
           <article class="card">
-            <h3>Works in chat apps</h3>
-            <p>Telegram, WhatsApp, Discord, Slack, Signal, and more.</p>
+            <h3>Any chat interface</h3>
+            <p>Telegram, WhatsApp, Discord, Slack, Signal, and web chat.</p>
           </article>
           <article class="card">
-            <h3>Actually executes tasks</h3>
-            <p>Browser automation, shell commands, file ops, tools, and background agents.</p>
+            <h3>Real execution</h3>
+            <p>Shell commands, browser automation, file operations, and more.</p>
           </article>
           <article class="card">
             <h3>Persistent memory</h3>
-            <p>Remembers preferences, context, and project history across sessions.</p>
+            <p>Learns your context over time so workflows get faster and smarter.</p>
           </article>
           <article class="card">
-            <h3>Skills + plugins</h3>
-            <p>Install existing skills or build custom ones for your exact workflow.</p>
+            <h3>Skill ecosystem</h3>
+            <p>Install community skills or build your own tailored actions.</p>
           </article>
           <article class="card">
-            <h3>Built for power users</h3>
-            <p>Hackable architecture with clean CLI workflows and extensible tooling.</p>
+            <h3>Background agents</h3>
+            <p>Run multi-step tasks asynchronously and get updates in chat.</p>
           </article>
         </div>
       </section>
 
-      <section class="container card spotlight">
-        <h2>Why MazelClaw</h2>
-        <p>
-          MazelClaw is a branded OpenClaw-based stack focused on real-world assistant workflows,
-          fast iteration, and deep customization.
-        </p>
-        <p>
-          This splash page showcases the project and links directly to the main repo for setup and source.
-        </p>
-        <a class="btn btn-primary" href="https://github.com/TalmudTech/mazelclaw" target="_blank" rel="noopener">Open the repo</a>
+      <section class="container integrations card">
+        <h2><span class="accent">⟩</span> Integrations</h2>
+        <div class="pill-row">
+          <span class="pill">Telegram</span>
+          <span class="pill">WhatsApp</span>
+          <span class="pill">Discord</span>
+          <span class="pill">Slack</span>
+          <span class="pill">Signal</span>
+          <span class="pill">iMessage</span>
+          <span class="pill">GitHub</span>
+          <span class="pill">Gmail</span>
+          <span class="pill">Browser</span>
+          <span class="pill">Custom skills</span>
+        </div>
       </section>
 
-      <section class="container cta-grid">
-        <a class="cta card" href="https://github.com/TalmudTech/mazelclaw" target="_blank" rel="noopener">
-          <h3>Source Code</h3>
-          <p>Browse the MazelClaw repository and track updates.</p>
-        </a>
-        <a class="cta card" href="https://docs.openclaw.ai" target="_blank" rel="noopener">
-          <h3>Documentation</h3>
-          <p>Read OpenClaw docs for architecture, setup, and integrations.</p>
-        </a>
-        <a class="cta card" href="https://discord.com/invite/clawd" target="_blank" rel="noopener">
-          <h3>Community</h3>
-          <p>Join Discord to share builds, ask questions, and find skills.</p>
-        </a>
+      <section class="container final-cta card">
+        <h2>Build your own personal AI stack.</h2>
+        <p>
+          MazelClaw gives you a branded, hackable, production-ready assistant foundation.
+          Start from the repo and adapt it to your exact workflows.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="https://github.com/TalmudTech/mazelclaw" target="_blank" rel="noopener">Open MazelClaw</a>
+          <a class="btn btn-ghost" href="https://discord.com/invite/clawd" target="_blank" rel="noopener">Join Community</a>
+        </div>
       </section>
     </main>
 
     <footer class="container footer">
-      <p>© <span id="year"></span> MazelClaw. Built on OpenClaw.</p>
+      <p>© <span id="year"></span> MazelClaw. Built on OpenClaw foundations.</p>
     </footer>
 
     <script>
-      document.getElementById("year").textContent = new Date().getFullYear();
+      const modeButtons = document.querySelectorAll('.mode-btn');
+      const blocks = document.querySelectorAll('.code-content');
+      modeButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const mode = btn.dataset.mode;
+          modeButtons.forEach((b) => {
+            b.classList.remove('active');
+            b.setAttribute('aria-selected', 'false');
+          });
+          blocks.forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          btn.setAttribute('aria-selected', 'true');
+          document.querySelector(`[data-content="${mode}"]`)?.classList.add('active');
+        });
+      });
+
+      document.getElementById('year').textContent = new Date().getFullYear();
     </script>
   </body>
 </html>
