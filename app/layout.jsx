@@ -6,7 +6,7 @@ export const metadata = {
     "MazelClaw is a personal AI assistant that actually does things: runs tools, automates workflows, and works from chat apps you already use.",
   openGraph: {
     title: "MazelClaw — Personal AI Assistant",
-    description: "A Gentile Golem that does our bidding, by Talmud Tech.",
+    description: "A Gentile Golem that does your bidding, the AI model that powers ShaBot, by Talmud Tech",
     url: "https://mazelclaw.com",
     siteName: "MazelClaw",
     images: [
@@ -22,7 +22,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "MazelClaw — Personal AI Assistant",
-    description: "A Gentile Golem that does our bidding, by Talmud Tech.",
+    description: "A Gentile Golem that does your bidding, the AI model that powers ShaBot, by Talmud Tech",
     images: ["https://mazelclaw.com/og-image.png"],
   },
 };
