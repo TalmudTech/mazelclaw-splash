@@ -27,27 +27,27 @@ if ($PSVersionTable.PSVersion.Major -lt 5) {
 Write-Host "[OK] Windows detected" -ForegroundColor Green
 
 if (-not $PSBoundParameters.ContainsKey("InstallMethod")) {
-    if (-not [string]::IsNullOrWhiteSpace($env:OPENCLAW_INSTALL_METHOD)) {
-        $InstallMethod = $env:OPENCLAW_INSTALL_METHOD
+    if (-not [string]::IsNullOrWhiteSpace($env:MAZELCLAW_INSTALL_METHOD)) {
+        $InstallMethod = $env:MAZELCLAW_INSTALL_METHOD
     }
 }
 if (-not $PSBoundParameters.ContainsKey("GitDir")) {
-    if (-not [string]::IsNullOrWhiteSpace($env:OPENCLAW_GIT_DIR)) {
-        $GitDir = $env:OPENCLAW_GIT_DIR
+    if (-not [string]::IsNullOrWhiteSpace($env:MAZELCLAW_GIT_DIR)) {
+        $GitDir = $env:MAZELCLAW_GIT_DIR
     }
 }
 if (-not $PSBoundParameters.ContainsKey("NoOnboard")) {
-    if ($env:OPENCLAW_NO_ONBOARD -eq "1") {
+    if ($env:MAZELCLAW_NO_ONBOARD -eq "1") {
         $NoOnboard = $true
     }
 }
 if (-not $PSBoundParameters.ContainsKey("NoGitUpdate")) {
-    if ($env:OPENCLAW_GIT_UPDATE -eq "0") {
+    if ($env:MAZELCLAW_GIT_UPDATE -eq "0") {
         $NoGitUpdate = $true
     }
 }
 if (-not $PSBoundParameters.ContainsKey("DryRun")) {
-    if ($env:OPENCLAW_DRY_RUN -eq "1") {
+    if ($env:MAZELCLAW_DRY_RUN -eq "1") {
         $DryRun = $true
     }
 }
@@ -124,7 +124,7 @@ function Install-Node {
 }
 
 # Check for existing MazelClaw installation
-function Check-ExistingOpenClaw {
+function Check-ExistingMazelClaw {
     try {
         $null = Get-Command mazelclaw -ErrorAction Stop
     Write-Host "[*] Existing MazelClaw installation detected" -ForegroundColor Yellow
@@ -153,7 +153,7 @@ function Require-Git {
     exit 1
 }
 
-function Ensure-OpenClawOnPath {
+function Ensure-MazelClawOnPath {
     if (Get-Command mazelclaw -ErrorAction SilentlyContinue) {
         return $true
     }
@@ -253,7 +253,7 @@ function Install-MazelClaw {
 }
 
 # Install MazelClaw from GitHub
-function Install-OpenClawFromGit {
+function Install-MazelClawFromGit {
     param(
         [string]$RepoDir,
         [switch]$SkipUpdate
@@ -358,8 +358,8 @@ function Refresh-GatewayServiceIfLoaded {
 }
 
 function Get-LegacyRepoDir {
-    if (-not [string]::IsNullOrWhiteSpace($env:OPENCLAW_GIT_DIR)) {
-        return $env:OPENCLAW_GIT_DIR
+    if (-not [string]::IsNullOrWhiteSpace($env:MAZELCLAW_GIT_DIR)) {
+        return $env:MAZELCLAW_GIT_DIR
     }
     $userHome = [Environment]::GetFolderPath("UserProfile")
     return (Join-Path $userHome "mazelclaw")
@@ -406,7 +406,7 @@ function Main {
     Remove-LegacySubmodule -RepoDir $RepoDir
 
     # Check for existing installation
-    $isUpgrade = Check-ExistingOpenClaw
+    $isUpgrade = Check-ExistingMazelClaw
 
     # Step 1: Node.js
     if (-not (Check-Node)) {
@@ -426,12 +426,12 @@ function Main {
     # Step 2: MazelClaw
     if ($InstallMethod -eq "git") {
         $finalGitDir = $GitDir
-        Install-OpenClawFromGit -RepoDir $GitDir -SkipUpdate:$NoGitUpdate
+        Install-MazelClawFromGit -RepoDir $GitDir -SkipUpdate:$NoGitUpdate
     } else {
         Install-MazelClaw
     }
 
-    if (-not (Ensure-OpenClawOnPath)) {
+    if (-not (Ensure-MazelClawOnPath)) {
         Write-Host "Install completed, but MazelClaw is not on PATH yet." -ForegroundColor Yellow
         Write-Host "Open a new terminal, then run: mazelclaw doctor" -ForegroundColor Cyan
         return

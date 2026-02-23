@@ -70,7 +70,7 @@ run_remote_bash() {
     /bin/bash "$tmp"
 }
 
-GUM_VERSION="${OPENCLAW_GUM_VERSION:-0.17.0}"
+GUM_VERSION="${MAZELCLAW_GUM_VERSION:-0.17.0}"
 GUM=""
 GUM_STATUS="skipped"
 GUM_REASON=""
@@ -350,7 +350,7 @@ show_install_plan() {
     ui_section "Install plan"
     ui_kv "OS" "$OS"
     ui_kv "Install method" "$INSTALL_METHOD"
-    ui_kv "Requested version" "$OPENCLAW_VERSION"
+    ui_kv "Requested version" "$MAZELCLAW_VERSION"
     if [[ "$USE_BETA" == "1" ]]; then
         ui_kv "Beta channel" "enabled"
     fi
@@ -471,7 +471,7 @@ cleanup_legacy_submodules() {
     fi
 }
 
-cleanup_npm_openclaw_paths() {
+cleanup_npm_mazelclaw_paths() {
     local npm_root=""
     npm_root="$(npm root -g 2>/dev/null || true)"
     if [[ -z "$npm_root" || "$npm_root" != *node_modules* ]]; then
@@ -480,7 +480,7 @@ cleanup_npm_openclaw_paths() {
     rm -rf "$npm_root"/.mazelclaw-* "$npm_root"/mazelclaw 2>/dev/null || true
 }
 
-extract_openclaw_conflict_path() {
+extract_mazelclaw_conflict_path() {
     local log="$1"
     local path=""
     path="$(sed -n 's/.*File exists: //p' "$log" | head -n1)"
@@ -494,7 +494,7 @@ extract_openclaw_conflict_path() {
     return 1
 }
 
-cleanup_openclaw_bin_conflict() {
+cleanup_mazelclaw_bin_conflict() {
     local bin_path="$1"
     if [[ -z "$bin_path" || ( ! -e "$bin_path" && ! -L "$bin_path" ) ]]; then
         return 1
@@ -745,7 +745,7 @@ print_npm_failure_diagnostics() {
     fi
 }
 
-install_openclaw_npm() {
+install_mazelclaw_npm() {
     local spec="$1"
     local log
     log="$(mktempfile)"
@@ -773,7 +773,7 @@ install_openclaw_npm() {
 
         if grep -q "ENOTEMPTY: directory not empty, rename .*mazelclaw" "$log"; then
             ui_warn "npm left stale directory; cleaning and retrying"
-            cleanup_npm_openclaw_paths
+            cleanup_npm_mazelclaw_paths
             if run_npm_global_install "$spec" "$log"; then
                 ui_success "MazelClaw npm package installed"
                 return 0
@@ -782,8 +782,8 @@ install_openclaw_npm() {
         fi
         if grep -q "EEXIST" "$log"; then
             local conflict=""
-            conflict="$(extract_openclaw_conflict_path "$log" || true)"
-            if [[ -n "$conflict" ]] && cleanup_openclaw_bin_conflict "$conflict"; then
+            conflict="$(extract_mazelclaw_conflict_path "$log" || true)"
+            if [[ -n "$conflict" ]] && cleanup_mazelclaw_bin_conflict "$conflict"; then
                 if run_npm_global_install "$spec" "$log"; then
                     ui_success "MazelClaw npm package installed"
                     return 0
@@ -911,19 +911,19 @@ map_legacy_env() {
     fi
 }
 
-map_legacy_env "OPENCLAW_TAGLINE_INDEX" "CLAWDBOT_TAGLINE_INDEX"
-map_legacy_env "OPENCLAW_NO_ONBOARD" "CLAWDBOT_NO_ONBOARD"
-map_legacy_env "OPENCLAW_NO_PROMPT" "CLAWDBOT_NO_PROMPT"
-map_legacy_env "OPENCLAW_DRY_RUN" "CLAWDBOT_DRY_RUN"
-map_legacy_env "OPENCLAW_INSTALL_METHOD" "CLAWDBOT_INSTALL_METHOD"
-map_legacy_env "OPENCLAW_VERSION" "CLAWDBOT_VERSION"
-map_legacy_env "OPENCLAW_BETA" "CLAWDBOT_BETA"
-map_legacy_env "OPENCLAW_GIT_DIR" "CLAWDBOT_GIT_DIR"
-map_legacy_env "OPENCLAW_GIT_UPDATE" "CLAWDBOT_GIT_UPDATE"
-map_legacy_env "OPENCLAW_NPM_LOGLEVEL" "CLAWDBOT_NPM_LOGLEVEL"
-map_legacy_env "OPENCLAW_VERBOSE" "CLAWDBOT_VERBOSE"
-map_legacy_env "OPENCLAW_PROFILE" "CLAWDBOT_PROFILE"
-map_legacy_env "OPENCLAW_INSTALL_SH_NO_RUN" "CLAWDBOT_INSTALL_SH_NO_RUN"
+map_legacy_env "MAZELCLAW_TAGLINE_INDEX" "CLAWDBOT_TAGLINE_INDEX"
+map_legacy_env "MAZELCLAW_NO_ONBOARD" "CLAWDBOT_NO_ONBOARD"
+map_legacy_env "MAZELCLAW_NO_PROMPT" "CLAWDBOT_NO_PROMPT"
+map_legacy_env "MAZELCLAW_DRY_RUN" "CLAWDBOT_DRY_RUN"
+map_legacy_env "MAZELCLAW_INSTALL_METHOD" "CLAWDBOT_INSTALL_METHOD"
+map_legacy_env "MAZELCLAW_VERSION" "CLAWDBOT_VERSION"
+map_legacy_env "MAZELCLAW_BETA" "CLAWDBOT_BETA"
+map_legacy_env "MAZELCLAW_GIT_DIR" "CLAWDBOT_GIT_DIR"
+map_legacy_env "MAZELCLAW_GIT_UPDATE" "CLAWDBOT_GIT_UPDATE"
+map_legacy_env "MAZELCLAW_NPM_LOGLEVEL" "CLAWDBOT_NPM_LOGLEVEL"
+map_legacy_env "MAZELCLAW_VERBOSE" "CLAWDBOT_VERBOSE"
+map_legacy_env "MAZELCLAW_PROFILE" "CLAWDBOT_PROFILE"
+map_legacy_env "MAZELCLAW_INSTALL_SH_NO_RUN" "CLAWDBOT_INSTALL_SH_NO_RUN"
 
 pick_tagline() {
     append_holiday_taglines
@@ -932,9 +932,9 @@ pick_tagline() {
         echo "$DEFAULT_TAGLINE"
         return
     fi
-    if [[ -n "${OPENCLAW_TAGLINE_INDEX:-}" ]]; then
-        if [[ "${OPENCLAW_TAGLINE_INDEX}" =~ ^[0-9]+$ ]]; then
-            local idx=$((OPENCLAW_TAGLINE_INDEX % count))
+    if [[ -n "${MAZELCLAW_TAGLINE_INDEX:-}" ]]; then
+        if [[ "${MAZELCLAW_TAGLINE_INDEX}" =~ ^[0-9]+$ ]]; then
+            local idx=$((MAZELCLAW_TAGLINE_INDEX % count))
             echo "${TAGLINES[$idx]}"
             return
         fi
@@ -945,20 +945,20 @@ pick_tagline() {
 
 TAGLINE=$(pick_tagline)
 
-NO_ONBOARD=${OPENCLAW_NO_ONBOARD:-0}
-NO_PROMPT=${OPENCLAW_NO_PROMPT:-0}
-DRY_RUN=${OPENCLAW_DRY_RUN:-0}
-INSTALL_METHOD=${OPENCLAW_INSTALL_METHOD:-}
-OPENCLAW_VERSION=${OPENCLAW_VERSION:-latest}
-USE_BETA=${OPENCLAW_BETA:-0}
+NO_ONBOARD=${MAZELCLAW_NO_ONBOARD:-0}
+NO_PROMPT=${MAZELCLAW_NO_PROMPT:-0}
+DRY_RUN=${MAZELCLAW_DRY_RUN:-0}
+INSTALL_METHOD=${MAZELCLAW_INSTALL_METHOD:-}
+MAZELCLAW_VERSION=${MAZELCLAW_VERSION:-latest}
+USE_BETA=${MAZELCLAW_BETA:-0}
 GIT_DIR_DEFAULT="${HOME}/mazelclaw"
-GIT_DIR=${OPENCLAW_GIT_DIR:-$GIT_DIR_DEFAULT}
-GIT_UPDATE=${OPENCLAW_GIT_UPDATE:-1}
+GIT_DIR=${MAZELCLAW_GIT_DIR:-$GIT_DIR_DEFAULT}
+GIT_UPDATE=${MAZELCLAW_GIT_UPDATE:-1}
 SHARP_IGNORE_GLOBAL_LIBVIPS="${SHARP_IGNORE_GLOBAL_LIBVIPS:-1}"
-NPM_LOGLEVEL="${OPENCLAW_NPM_LOGLEVEL:-error}"
+NPM_LOGLEVEL="${MAZELCLAW_NPM_LOGLEVEL:-error}"
 NPM_SILENT_FLAG="--silent"
-VERBOSE="${OPENCLAW_VERBOSE:-0}"
-OPENCLAW_BIN=""
+VERBOSE="${MAZELCLAW_VERBOSE:-0}"
+MAZELCLAW_BIN=""
 PNPM_CMD=()
 HELP=0
 
@@ -984,16 +984,16 @@ Options:
   --help, -h                            Show this help
 
 Environment variables:
-  OPENCLAW_INSTALL_METHOD=git|npm
-  OPENCLAW_VERSION=latest|next|<semver>
-  OPENCLAW_BETA=0|1
-  OPENCLAW_GIT_DIR=...
-  OPENCLAW_GIT_UPDATE=0|1
-  OPENCLAW_NO_PROMPT=1
-  OPENCLAW_DRY_RUN=1
-  OPENCLAW_NO_ONBOARD=1
-  OPENCLAW_VERBOSE=1
-  OPENCLAW_NPM_LOGLEVEL=error|warn|notice  Default: error (hide npm deprecation noise)
+  MAZELCLAW_INSTALL_METHOD=git|npm
+  MAZELCLAW_VERSION=latest|next|<semver>
+  MAZELCLAW_BETA=0|1
+  MAZELCLAW_GIT_DIR=...
+  MAZELCLAW_GIT_UPDATE=0|1
+  MAZELCLAW_NO_PROMPT=1
+  MAZELCLAW_DRY_RUN=1
+  MAZELCLAW_NO_ONBOARD=1
+  MAZELCLAW_VERBOSE=1
+  MAZELCLAW_NPM_LOGLEVEL=error|warn|notice  Default: error (hide npm deprecation noise)
   SHARP_IGNORE_GLOBAL_LIBVIPS=0|1    Default: 1 (avoid sharp building against global libvips)
 
 Examples:
@@ -1035,7 +1035,7 @@ parse_args() {
                 shift 2
                 ;;
             --version)
-                OPENCLAW_VERSION="$2"
+                MAZELCLAW_VERSION="$2"
                 shift 2
                 ;;
             --beta)
@@ -1151,7 +1151,7 @@ EOF
     return 1
 }
 
-detect_openclaw_checkout() {
+detect_mazelclaw_checkout() {
     local dir="$1"
     if [[ ! -f "$dir/package.json" ]]; then
         return 1
@@ -1478,7 +1478,7 @@ fix_npm_permissions() {
     ui_success "npm configured for user installs"
 }
 
-ensure_openclaw_bin_link() {
+ensure_mazelclaw_bin_link() {
     local npm_root=""
     npm_root="$(npm root -g 2>/dev/null || true)"
     if [[ -z "$npm_root" || ! -d "$npm_root/mazelclaw" ]]; then
@@ -1498,7 +1498,7 @@ ensure_openclaw_bin_link() {
 }
 
 # Check for existing MazelClaw installation
-check_existing_openclaw() {
+check_existing_mazelclaw() {
     if [[ -n "$(type -P mazelclaw 2>/dev/null || true)" ]]; then
         ui_info "Existing MazelClaw installation detected, upgrading"
         return 0
@@ -1704,7 +1704,7 @@ maybe_nodenv_rehash() {
     fi
 }
 
-warn_openclaw_not_found() {
+warn_mazelclaw_not_found() {
     ui_warn "Installed, but mazelclaw is not discoverable on PATH in this shell"
     echo "  Try: hash -r (bash) or rehash (zsh), then retry."
     local t=""
@@ -1729,7 +1729,7 @@ warn_openclaw_not_found() {
     fi
 }
 
-resolve_openclaw_bin() {
+resolve_mazelclaw_bin() {
     refresh_shell_command_cache
     local resolved=""
     resolved="$(type -P mazelclaw 2>/dev/null || true)"
@@ -1770,7 +1770,7 @@ resolve_openclaw_bin() {
     return 1
 }
 
-install_openclaw_from_git() {
+install_mazelclaw_from_git() {
     local repo_dir="$1"
     local repo_url="https://github.com/TalmudTech/mazelclaw.git"
 
@@ -1830,54 +1830,54 @@ resolve_beta_version() {
     echo "$beta"
 }
 
-install_openclaw() {
+install_mazelclaw() {
     local package_name="mazelclaw"
     if [[ "$USE_BETA" == "1" ]]; then
         local beta_version=""
         beta_version="$(resolve_beta_version || true)"
         if [[ -n "$beta_version" ]]; then
-            OPENCLAW_VERSION="$beta_version"
+            MAZELCLAW_VERSION="$beta_version"
             ui_info "Beta tag detected (${beta_version})"
             package_name="mazelclaw"
         else
-            OPENCLAW_VERSION="latest"
+            MAZELCLAW_VERSION="latest"
             ui_info "No beta tag found; using latest"
         fi
     fi
 
-    if [[ -z "${OPENCLAW_VERSION}" ]]; then
-        OPENCLAW_VERSION="latest"
+    if [[ -z "${MAZELCLAW_VERSION}" ]]; then
+        MAZELCLAW_VERSION="latest"
     fi
 
     local resolved_version=""
-    resolved_version="$(npm view "${package_name}@${OPENCLAW_VERSION}" version 2>/dev/null || true)"
+    resolved_version="$(npm view "${package_name}@${MAZELCLAW_VERSION}" version 2>/dev/null || true)"
     if [[ -n "$resolved_version" ]]; then
         ui_info "Installing MazelClaw v${resolved_version}"
     else
-        ui_info "Installing MazelClaw (${OPENCLAW_VERSION})"
+        ui_info "Installing MazelClaw (${MAZELCLAW_VERSION})"
     fi
     local install_spec=""
-    if [[ "${OPENCLAW_VERSION}" == "latest" ]]; then
+    if [[ "${MAZELCLAW_VERSION}" == "latest" ]]; then
         install_spec="${package_name}@latest"
     else
-        install_spec="${package_name}@${OPENCLAW_VERSION}"
+        install_spec="${package_name}@${MAZELCLAW_VERSION}"
     fi
 
-    if ! install_openclaw_npm "${install_spec}"; then
+    if ! install_mazelclaw_npm "${install_spec}"; then
         ui_warn "npm install failed; retrying"
-        cleanup_npm_openclaw_paths
-        install_openclaw_npm "${install_spec}"
+        cleanup_npm_mazelclaw_paths
+        install_mazelclaw_npm "${install_spec}"
     fi
 
-    if [[ "${OPENCLAW_VERSION}" == "latest" && "${package_name}" == "mazelclaw" ]]; then
-        if ! resolve_openclaw_bin &> /dev/null; then
+    if [[ "${MAZELCLAW_VERSION}" == "latest" && "${package_name}" == "mazelclaw" ]]; then
+        if ! resolve_mazelclaw_bin &> /dev/null; then
             ui_warn "npm install mazelclaw@latest failed; retrying mazelclaw@next"
-            cleanup_npm_openclaw_paths
-            install_openclaw_npm "mazelclaw@next"
+            cleanup_npm_mazelclaw_paths
+            install_mazelclaw_npm "mazelclaw@next"
         fi
     fi
 
-    ensure_openclaw_bin_link || true
+    ensure_mazelclaw_bin_link || true
 
     ui_success "MazelClaw installed"
 }
@@ -1885,13 +1885,13 @@ install_openclaw() {
 # Run doctor for migrations (safe, non-interactive)
 run_doctor() {
     ui_info "Running doctor to migrate settings"
-    local claw="${OPENCLAW_BIN:-}"
+    local claw="${MAZELCLAW_BIN:-}"
     if [[ -z "$claw" ]]; then
-        claw="$(resolve_openclaw_bin || true)"
+        claw="$(resolve_mazelclaw_bin || true)"
     fi
     if [[ -z "$claw" ]]; then
         ui_info "Skipping doctor (mazelclaw not on PATH yet)"
-        warn_openclaw_not_found
+        warn_mazelclaw_not_found
         return 0
     fi
     run_quiet_step "Running doctor" "$claw" doctor --non-interactive || true
@@ -1899,9 +1899,9 @@ run_doctor() {
 }
 
 maybe_open_dashboard() {
-    local claw="${OPENCLAW_BIN:-}"
+    local claw="${MAZELCLAW_BIN:-}"
     if [[ -z "$claw" ]]; then
-        claw="$(resolve_openclaw_bin || true)"
+        claw="$(resolve_mazelclaw_bin || true)"
     fi
     if [[ -z "$claw" ]]; then
         return 0
@@ -1913,7 +1913,7 @@ maybe_open_dashboard() {
 }
 
 resolve_workspace_dir() {
-    local profile="${OPENCLAW_PROFILE:-default}"
+    local profile="${MAZELCLAW_PROFILE:-default}"
     if [[ "${profile}" != "default" ]]; then
         echo "${HOME}/.mazelclaw/workspace-${profile}"
     else
@@ -1926,7 +1926,7 @@ run_bootstrap_onboarding_if_needed() {
         return
     fi
 
-    local config_path="${OPENCLAW_CONFIG_PATH:-$HOME/.TalmudTech/mazelclaw.json}"
+    local config_path="${MAZELCLAW_CONFIG_PATH:-$HOME/.TalmudTech/mazelclaw.json}"
     if [[ -f "${config_path}" || -f "$HOME/.clawdbot/clawdbot.json" || -f "$HOME/.moltbot/moltbot.json" || -f "$HOME/.moldbot/moldbot.json" ]]; then
         return
     fi
@@ -1945,13 +1945,13 @@ run_bootstrap_onboarding_if_needed() {
     fi
 
     ui_info "BOOTSTRAP.md found; starting onboarding"
-    local claw="${OPENCLAW_BIN:-}"
+    local claw="${MAZELCLAW_BIN:-}"
     if [[ -z "$claw" ]]; then
-        claw="$(resolve_openclaw_bin || true)"
+        claw="$(resolve_mazelclaw_bin || true)"
     fi
     if [[ -z "$claw" ]]; then
         ui_info "BOOTSTRAP.md found but mazelclaw not on PATH; skipping onboarding"
-        warn_openclaw_not_found
+        warn_mazelclaw_not_found
         return
     fi
 
@@ -1961,9 +1961,9 @@ run_bootstrap_onboarding_if_needed() {
     }
 }
 
-resolve_openclaw_version() {
+resolve_mazelclaw_version() {
     local version=""
-    local claw="${OPENCLAW_BIN:-}"
+    local claw="${MAZELCLAW_BIN:-}"
     if [[ -z "$claw" ]] && command -v mazelclaw &> /dev/null; then
         claw="$(command -v mazelclaw)"
     fi
@@ -2006,9 +2006,9 @@ try {
 }
 
 refresh_gateway_service_if_loaded() {
-    local claw="${OPENCLAW_BIN:-}"
+    local claw="${MAZELCLAW_BIN:-}"
     if [[ -z "$claw" ]]; then
-        claw="$(resolve_openclaw_bin || true)"
+        claw="$(resolve_mazelclaw_bin || true)"
     fi
     if [[ -z "$claw" ]]; then
         return 0
@@ -2049,7 +2049,7 @@ main() {
     detect_os_or_die
 
     local detected_checkout=""
-    detected_checkout="$(detect_openclaw_checkout "$PWD" || true)"
+    detected_checkout="$(detect_mazelclaw_checkout "$PWD" || true)"
 
     if [[ -z "$INSTALL_METHOD" && -n "$detected_checkout" ]]; then
         if ! is_promptable; then
@@ -2064,7 +2064,7 @@ main() {
                     ;;
                 *)
                     ui_error "no install method selected"
-                    echo "Re-run with: --install-method git|npm (or set OPENCLAW_INSTALL_METHOD)."
+                    echo "Re-run with: --install-method git|npm (or set MAZELCLAW_INSTALL_METHOD)."
                     exit 2
                     ;;
             esac
@@ -2090,7 +2090,7 @@ main() {
 
     # Check for existing installation
     local is_upgrade=false
-    if check_existing_openclaw; then
+    if check_existing_mazelclaw; then
         is_upgrade=true
     fi
     local should_open_dashboard=false
@@ -2122,7 +2122,7 @@ main() {
             repo_dir="$detected_checkout"
         fi
         final_git_dir="$repo_dir"
-        install_openclaw_from_git "$repo_dir"
+        install_mazelclaw_from_git "$repo_dir"
     else
         # Clean up git wrapper if switching to npm
         if [[ -x "$HOME/.local/bin/mazelclaw" ]]; then
@@ -2140,12 +2140,12 @@ main() {
         fix_npm_permissions
 
         # Step 5: MazelClaw
-        install_openclaw
+        install_mazelclaw
     fi
 
     ui_stage "Finalizing setup"
 
-    OPENCLAW_BIN="$(resolve_openclaw_bin || true)"
+    MAZELCLAW_BIN="$(resolve_mazelclaw_bin || true)"
 
     # PATH warning: installs can succeed while the user's login shell still lacks npm's global bin dir.
     local npm_bin=""
@@ -2175,7 +2175,7 @@ main() {
     run_bootstrap_onboarding_if_needed
 
     local installed_version
-    installed_version=$(resolve_openclaw_version)
+    installed_version=$(resolve_mazelclaw_version)
 
     echo ""
     if [[ -n "$installed_version" ]]; then
@@ -2237,13 +2237,13 @@ main() {
     elif [[ "$is_upgrade" == "true" ]]; then
         ui_info "Upgrade complete"
         if [[ -r /dev/tty && -w /dev/tty ]]; then
-            local claw="${OPENCLAW_BIN:-}"
+            local claw="${MAZELCLAW_BIN:-}"
             if [[ -z "$claw" ]]; then
-                claw="$(resolve_openclaw_bin || true)"
+                claw="$(resolve_mazelclaw_bin || true)"
             fi
             if [[ -z "$claw" ]]; then
                 ui_info "Skipping doctor (mazelclaw not on PATH yet)"
-                warn_openclaw_not_found
+                warn_mazelclaw_not_found
                 return 0
             fi
             local -a doctor_args=()
@@ -2255,13 +2255,13 @@ main() {
             ui_info "Running mazelclaw doctor"
             local doctor_ok=0
             if (( ${#doctor_args[@]} )); then
-                OPENCLAW_UPDATE_IN_PROGRESS=1 "$claw" doctor "${doctor_args[@]}" </dev/tty && doctor_ok=1
+                MAZELCLAW_UPDATE_IN_PROGRESS=1 "$claw" doctor "${doctor_args[@]}" </dev/tty && doctor_ok=1
             else
-                OPENCLAW_UPDATE_IN_PROGRESS=1 "$claw" doctor </dev/tty && doctor_ok=1
+                MAZELCLAW_UPDATE_IN_PROGRESS=1 "$claw" doctor </dev/tty && doctor_ok=1
             fi
             if (( doctor_ok )); then
                 ui_info "Updating plugins"
-                OPENCLAW_UPDATE_IN_PROGRESS=1 "$claw" plugins update --all || true
+                MAZELCLAW_UPDATE_IN_PROGRESS=1 "$claw" plugins update --all || true
             else
                 ui_warn "Doctor failed; skipping plugin updates"
             fi
@@ -2272,7 +2272,7 @@ main() {
         if [[ "$NO_ONBOARD" == "1" || "$skip_onboard" == "true" ]]; then
             ui_info "Skipping onboard (requested); run mazelclaw onboard later"
         else
-            local config_path="${OPENCLAW_CONFIG_PATH:-$HOME/.TalmudTech/mazelclaw.json}"
+            local config_path="${MAZELCLAW_CONFIG_PATH:-$HOME/.TalmudTech/mazelclaw.json}"
             if [[ -f "${config_path}" || -f "$HOME/.clawdbot/clawdbot.json" || -f "$HOME/.moltbot/moltbot.json" || -f "$HOME/.moldbot/moldbot.json" ]]; then
                 ui_info "Config already present; running doctor"
                 run_doctor
@@ -2283,13 +2283,13 @@ main() {
             ui_info "Starting setup"
             echo ""
             if [[ -r /dev/tty && -w /dev/tty ]]; then
-                local claw="${OPENCLAW_BIN:-}"
+                local claw="${MAZELCLAW_BIN:-}"
                 if [[ -z "$claw" ]]; then
-                    claw="$(resolve_openclaw_bin || true)"
+                    claw="$(resolve_mazelclaw_bin || true)"
                 fi
                 if [[ -z "$claw" ]]; then
                     ui_info "Skipping onboarding (mazelclaw not on PATH yet)"
-                    warn_openclaw_not_found
+                    warn_mazelclaw_not_found
                     return 0
                 fi
                 exec </dev/tty
@@ -2301,16 +2301,16 @@ main() {
     fi
 
     if command -v mazelclaw &> /dev/null; then
-        local claw="${OPENCLAW_BIN:-}"
+        local claw="${MAZELCLAW_BIN:-}"
         if [[ -z "$claw" ]]; then
-            claw="$(resolve_openclaw_bin || true)"
+            claw="$(resolve_mazelclaw_bin || true)"
         fi
         if [[ -n "$claw" ]] && is_gateway_daemon_loaded "$claw"; then
             if [[ "$DRY_RUN" == "1" ]]; then
                 ui_info "Gateway daemon detected; would restart (mazelclaw daemon restart)"
             else
                 ui_info "Gateway daemon detected; restarting"
-                if OPENCLAW_UPDATE_IN_PROGRESS=1 "$claw" daemon restart >/dev/null 2>&1; then
+                if MAZELCLAW_UPDATE_IN_PROGRESS=1 "$claw" daemon restart >/dev/null 2>&1; then
                     ui_success "Gateway restarted"
                 else
                     ui_warn "Gateway restart failed; try: mazelclaw daemon restart"
@@ -2326,7 +2326,7 @@ main() {
     show_footer_links
 }
 
-if [[ "${OPENCLAW_INSTALL_SH_NO_RUN:-0}" != "1" ]]; then
+if [[ "${MAZELCLAW_INSTALL_SH_NO_RUN:-0}" != "1" ]]; then
     parse_args "$@"
     configure_verbose
     main

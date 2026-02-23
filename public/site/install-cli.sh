@@ -4,14 +4,14 @@ set -euo pipefail
 # MazelClaw CLI installer (non-interactive, no onboarding)
 # Usage: curl -fsSL --proto '=https' --tlsv1.2 https://mazelclaw.ai/install-cli.sh | bash -s -- [--json] [--prefix <path>] [--version <ver>] [--node-version <ver>] [--onboard]
 
-PREFIX="${OPENCLAW_PREFIX:-${HOME}/.mazelclaw}"
-OPENCLAW_VERSION="${OPENCLAW_VERSION:-latest}"
-NODE_VERSION="${OPENCLAW_NODE_VERSION:-22.22.0}"
+PREFIX="${MAZELCLAW_PREFIX:-${HOME}/.mazelclaw}"
+MAZELCLAW_VERSION="${MAZELCLAW_VERSION:-latest}"
+NODE_VERSION="${MAZELCLAW_NODE_VERSION:-22.22.0}"
 SHARP_IGNORE_GLOBAL_LIBVIPS="${SHARP_IGNORE_GLOBAL_LIBVIPS:-1}"
-NPM_LOGLEVEL="${OPENCLAW_NPM_LOGLEVEL:-error}"
-INSTALL_METHOD="${OPENCLAW_INSTALL_METHOD:-npm}"
-GIT_DIR="${OPENCLAW_GIT_DIR:-${HOME}/mazelclaw}"
-GIT_UPDATE="${OPENCLAW_GIT_UPDATE:-1}"
+NPM_LOGLEVEL="${MAZELCLAW_NPM_LOGLEVEL:-error}"
+INSTALL_METHOD="${MAZELCLAW_INSTALL_METHOD:-npm}"
+GIT_DIR="${MAZELCLAW_GIT_DIR:-${HOME}/mazelclaw}"
+GIT_UPDATE="${MAZELCLAW_GIT_UPDATE:-1}"
 JSON=0
 RUN_ONBOARD=0
 SET_NPM_PREFIX=0
@@ -33,11 +33,11 @@ Usage: install-cli.sh [options]
 
 Environment variables:
   SHARP_IGNORE_GLOBAL_LIBVIPS=0|1    Default: 1 (avoid sharp building against global libvips)
-  OPENCLAW_NPM_LOGLEVEL=error|warn|notice  Default: error (hide npm deprecation noise)
-  OPENCLAW_INSTALL_METHOD=git|npm
-  OPENCLAW_VERSION=latest|next|<semver>
-  OPENCLAW_GIT_DIR=...
-  OPENCLAW_GIT_UPDATE=0|1
+  MAZELCLAW_NPM_LOGLEVEL=error|warn|notice  Default: error (hide npm deprecation noise)
+  MAZELCLAW_INSTALL_METHOD=git|npm
+  MAZELCLAW_VERSION=latest|next|<semver>
+  MAZELCLAW_GIT_DIR=...
+  MAZELCLAW_GIT_UPDATE=0|1
 EOF
 }
 
@@ -74,7 +74,7 @@ download_file() {
 }
 
 cleanup_legacy_submodules() {
-  local repo_dir="${1:-${OPENCLAW_GIT_DIR:-${HOME}/mazelclaw}}"
+  local repo_dir="${1:-${MAZELCLAW_GIT_DIR:-${HOME}/mazelclaw}}"
   local legacy_dir="${repo_dir}/Peekaboo"
   if [[ -d "$legacy_dir" ]]; then
     emit_json "{\"event\":\"step\",\"name\":\"legacy-submodule\",\"status\":\"start\",\"path\":\"${legacy_dir//\"/\\\"}\"}"
@@ -198,7 +198,7 @@ parse_args() {
         shift 2
         ;;
       --version)
-        OPENCLAW_VERSION="$2"
+        MAZELCLAW_VERSION="$2"
         shift 2
         ;;
       --node-version)
@@ -401,8 +401,8 @@ fix_npm_prefix_if_needed() {
   log "Configured npm prefix to ${target}"
 }
 
-install_openclaw() {
-  local requested="${OPENCLAW_VERSION:-latest}"
+install_mazelclaw() {
+  local requested="${MAZELCLAW_VERSION:-latest}"
   local npm_args=(
     --loglevel "$NPM_LOGLEVEL"
     --no-fund
@@ -435,7 +435,7 @@ EOF
   emit_json "{\"event\":\"step\",\"name\":\"mazelclaw\",\"status\":\"ok\",\"version\":\"${requested}\"}"
 }
 
-install_openclaw_from_git() {
+install_mazelclaw_from_git() {
   local repo_dir="$1"
   local repo_url="https://github.com/TalmudTech/mazelclaw.git"
 
@@ -450,9 +450,9 @@ install_openclaw_from_git() {
 
   emit_json "{\"event\":\"step\",\"name\":\"mazelclaw\",\"status\":\"start\",\"method\":\"git\",\"repo\":\"${repo_url//\"/\\\"}\"}"
   if [[ -d "$repo_dir/.git" ]]; then
-    log "Installing Openclaw from git checkout: ${repo_dir}"
+    log "Installing MazelClaw from git checkout: ${repo_dir}"
   else
-    log "Installing Openclaw from GitHub (${repo_url})..."
+    log "Installing MazelClaw from GitHub (${repo_url})..."
   fi
 
   ensure_git
@@ -497,7 +497,7 @@ EOF
   emit_json "{\"event\":\"step\",\"name\":\"mazelclaw\",\"status\":\"ok\",\"method\":\"git\"}"
 }
 
-resolve_openclaw_version() {
+resolve_mazelclaw_version() {
   local version=""
   if [[ -x "${PREFIX}/bin/mazelclaw" ]]; then
     version="$("${PREFIX}/bin/mazelclaw" --version 2>/dev/null | head -n 1 | tr -d '\r')"
@@ -563,7 +563,7 @@ refresh_gateway_service_if_loaded() {
 main() {
   parse_args "$@"
 
-  if [[ "${OPENCLAW_NO_ONBOARD:-0}" == "1" ]]; then
+  if [[ "${MAZELCLAW_NO_ONBOARD:-0}" == "1" ]]; then
     RUN_ONBOARD=0
   fi
 
@@ -574,13 +574,13 @@ main() {
 
   install_node
   if [[ "$INSTALL_METHOD" == "git" ]]; then
-    install_openclaw_from_git "$GIT_DIR"
+    install_mazelclaw_from_git "$GIT_DIR"
   elif [[ "$INSTALL_METHOD" == "npm" ]]; then
     ensure_git
     if [[ "$SET_NPM_PREFIX" -eq 1 ]]; then
       fix_npm_prefix_if_needed
     fi
-    install_openclaw
+    install_mazelclaw
   else
     fail "Unknown install method: ${INSTALL_METHOD} (use npm or git)"
   fi
@@ -588,7 +588,7 @@ main() {
   refresh_gateway_service_if_loaded
 
   local installed_version
-  installed_version="$(resolve_openclaw_version)"
+  installed_version="$(resolve_mazelclaw_version)"
   if [[ -n "$installed_version" ]]; then
     emit_json "{\"event\":\"done\",\"ok\":true,\"version\":\"${installed_version//\"/\\\"}\"}"
     log "MazelClaw installed (${installed_version})."

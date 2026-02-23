@@ -62,7 +62,7 @@ if %ERRORLEVEL% neq 0 (
 
 set "TMP=%TEMP%\mazelclaw-install.ps1"
 REM TMP may include spaces; always quote "%TMP%" when used.
-if not "%OPENCLAW_INSTALL_PS1_URL%"=="" set "INSTALL_PS1_URL=%OPENCLAW_INSTALL_PS1_URL%"
+if not "%MAZELCLAW_INSTALL_PS1_URL%"=="" set "INSTALL_PS1_URL=%MAZELCLAW_INSTALL_PS1_URL%"
 if "%INSTALL_PS1_URL%"=="" set "INSTALL_PS1_URL=https://mazelclaw.ai/install.ps1"
 
 if exist "%INSTALL_PS1_URL%" (
