@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# OpenClaw CLI installer (non-interactive, no onboarding)
-# Usage: curl -fsSL --proto '=https' --tlsv1.2 https://openclaw.ai/install-cli.sh | bash -s -- [--json] [--prefix <path>] [--version <ver>] [--node-version <ver>] [--onboard]
+# MazelClaw CLI installer (non-interactive, no onboarding)
+# Usage: curl -fsSL --proto '=https' --tlsv1.2 https://mazelclaw.ai/install-cli.sh | bash -s -- [--json] [--prefix <path>] [--version <ver>] [--node-version <ver>] [--onboard]
 
-PREFIX="${OPENCLAW_PREFIX:-${HOME}/.openclaw}"
+PREFIX="${OPENCLAW_PREFIX:-${HOME}/.mazelclaw}"
 OPENCLAW_VERSION="${OPENCLAW_VERSION:-latest}"
 NODE_VERSION="${OPENCLAW_NODE_VERSION:-22.22.0}"
 SHARP_IGNORE_GLOBAL_LIBVIPS="${SHARP_IGNORE_GLOBAL_LIBVIPS:-1}"
 NPM_LOGLEVEL="${OPENCLAW_NPM_LOGLEVEL:-error}"
 INSTALL_METHOD="${OPENCLAW_INSTALL_METHOD:-npm}"
-GIT_DIR="${OPENCLAW_GIT_DIR:-${HOME}/openclaw}"
+GIT_DIR="${OPENCLAW_GIT_DIR:-${HOME}/mazelclaw}"
 GIT_UPDATE="${OPENCLAW_GIT_UPDATE:-1}"
 JSON=0
 RUN_ONBOARD=0
@@ -20,14 +20,14 @@ print_usage() {
   cat <<EOF
 Usage: install-cli.sh [options]
   --json                              Emit NDJSON events (no human output)
-  --prefix <path>                     Install prefix (default: ~/.openclaw)
+  --prefix <path>                     Install prefix (default: ~/.mazelclaw)
   --install-method, --method npm|git  Install via npm (default) or from a git checkout
   --npm                               Shortcut for --install-method npm
   --git, --github                     Shortcut for --install-method git
-  --git-dir, --dir <path>             Checkout directory (default: ~/openclaw)
-  --version <ver>                     OpenClaw version (default: latest)
+  --git-dir, --dir <path>             Checkout directory (default: ~/mazelclaw)
+  --version <ver>                     MazelClaw version (default: latest)
   --node-version <ver>                Node version (default: 22.22.0)
-  --onboard                           Run "openclaw onboard" after install
+  --onboard                           Run "mazelclaw onboard" after install
   --no-onboard                        Skip onboarding (default)
   --set-npm-prefix                    Force npm prefix to ~/.npm-global if current prefix is not writable (Linux)
 
@@ -74,7 +74,7 @@ download_file() {
 }
 
 cleanup_legacy_submodules() {
-  local repo_dir="${1:-${OPENCLAW_GIT_DIR:-${HOME}/openclaw}}"
+  local repo_dir="${1:-${OPENCLAW_GIT_DIR:-${HOME}/mazelclaw}}"
   local legacy_dir="${repo_dir}/Peekaboo"
   if [[ -d "$legacy_dir" ]]; then
     emit_json "{\"event\":\"step\",\"name\":\"legacy-submodule\",\"status\":\"start\",\"path\":\"${legacy_dir//\"/\\\"}\"}"
@@ -408,36 +408,36 @@ install_openclaw() {
     --no-fund
     --no-audit
   )
-  emit_json "{\"event\":\"step\",\"name\":\"openclaw\",\"status\":\"start\",\"version\":\"${requested}\"}"
-  log "Installing OpenClaw (${requested})..."
+  emit_json "{\"event\":\"step\",\"name\":\"mazelclaw\",\"status\":\"start\",\"version\":\"${requested}\"}"
+  log "Installing MazelClaw (${requested})..."
   if [[ "$SET_NPM_PREFIX" -eq 1 ]]; then
     fix_npm_prefix_if_needed
   fi
 
   if [[ "${requested}" == "latest" ]]; then
-    if ! SHARP_IGNORE_GLOBAL_LIBVIPS="$SHARP_IGNORE_GLOBAL_LIBVIPS" "$(npm_bin)" install -g --prefix "$PREFIX" "${npm_args[@]}" "openclaw@latest"; then
-      log "npm install openclaw@latest failed; retrying openclaw@next"
-      emit_json "{\"event\":\"step\",\"name\":\"openclaw\",\"status\":\"retry\",\"version\":\"next\"}"
-      SHARP_IGNORE_GLOBAL_LIBVIPS="$SHARP_IGNORE_GLOBAL_LIBVIPS" "$(npm_bin)" install -g --prefix "$PREFIX" "${npm_args[@]}" "openclaw@next"
+    if ! SHARP_IGNORE_GLOBAL_LIBVIPS="$SHARP_IGNORE_GLOBAL_LIBVIPS" "$(npm_bin)" install -g --prefix "$PREFIX" "${npm_args[@]}" "mazelclaw@latest"; then
+      log "npm install mazelclaw@latest failed; retrying mazelclaw@next"
+      emit_json "{\"event\":\"step\",\"name\":\"mazelclaw\",\"status\":\"retry\",\"version\":\"next\"}"
+      SHARP_IGNORE_GLOBAL_LIBVIPS="$SHARP_IGNORE_GLOBAL_LIBVIPS" "$(npm_bin)" install -g --prefix "$PREFIX" "${npm_args[@]}" "mazelclaw@next"
       requested="next"
     fi
   else
-    SHARP_IGNORE_GLOBAL_LIBVIPS="$SHARP_IGNORE_GLOBAL_LIBVIPS" "$(npm_bin)" install -g --prefix "$PREFIX" "${npm_args[@]}" "openclaw@${requested}"
+    SHARP_IGNORE_GLOBAL_LIBVIPS="$SHARP_IGNORE_GLOBAL_LIBVIPS" "$(npm_bin)" install -g --prefix "$PREFIX" "${npm_args[@]}" "mazelclaw@${requested}"
   fi
 
-  rm -f "${PREFIX}/bin/openclaw"
-  cat > "${PREFIX}/bin/openclaw" <<EOF
+  rm -f "${PREFIX}/bin/mazelclaw"
+  cat > "${PREFIX}/bin/mazelclaw" <<EOF
 #!/usr/bin/env bash
 set -euo pipefail
-exec "${PREFIX}/tools/node/bin/node" "${PREFIX}/lib/node_modules/openclaw/dist/entry.js" "\$@"
+exec "${PREFIX}/tools/node/bin/node" "${PREFIX}/lib/node_modules/mazelclaw/dist/entry.js" "\$@"
 EOF
-  chmod +x "${PREFIX}/bin/openclaw"
-  emit_json "{\"event\":\"step\",\"name\":\"openclaw\",\"status\":\"ok\",\"version\":\"${requested}\"}"
+  chmod +x "${PREFIX}/bin/mazelclaw"
+  emit_json "{\"event\":\"step\",\"name\":\"mazelclaw\",\"status\":\"ok\",\"version\":\"${requested}\"}"
 }
 
 install_openclaw_from_git() {
   local repo_dir="$1"
-  local repo_url="https://github.com/openclaw/openclaw.git"
+  local repo_url="https://github.com/TalmudTech/mazelclaw.git"
 
   if [[ -z "$repo_dir" ]]; then
     fail "Git install dir cannot be empty"
@@ -448,7 +448,7 @@ install_openclaw_from_git() {
   mkdir -p "$(dirname "$repo_dir")"
   repo_dir="$(cd "$(dirname "$repo_dir")" && pwd)/$(basename "$repo_dir")"
 
-  emit_json "{\"event\":\"step\",\"name\":\"openclaw\",\"status\":\"start\",\"method\":\"git\",\"repo\":\"${repo_url//\"/\\\"}\"}"
+  emit_json "{\"event\":\"step\",\"name\":\"mazelclaw\",\"status\":\"start\",\"method\":\"git\",\"repo\":\"${repo_url//\"/\\\"}\"}"
   if [[ -d "$repo_dir/.git" ]]; then
     log "Installing Openclaw from git checkout: ${repo_dir}"
   else
@@ -488,19 +488,19 @@ install_openclaw_from_git() {
   pnpm -C "$repo_dir" build
 
   mkdir -p "${PREFIX}/bin"
-  cat > "${PREFIX}/bin/openclaw" <<EOF
+  cat > "${PREFIX}/bin/mazelclaw" <<EOF
 #!/usr/bin/env bash
 set -euo pipefail
 exec "${PREFIX}/tools/node/bin/node" "${repo_dir}/dist/entry.js" "\$@"
 EOF
-  chmod +x "${PREFIX}/bin/openclaw"
-  emit_json "{\"event\":\"step\",\"name\":\"openclaw\",\"status\":\"ok\",\"method\":\"git\"}"
+  chmod +x "${PREFIX}/bin/mazelclaw"
+  emit_json "{\"event\":\"step\",\"name\":\"mazelclaw\",\"status\":\"ok\",\"method\":\"git\"}"
 }
 
 resolve_openclaw_version() {
   local version=""
-  if [[ -x "${PREFIX}/bin/openclaw" ]]; then
-    version="$("${PREFIX}/bin/openclaw" --version 2>/dev/null | head -n 1 | tr -d '\r')"
+  if [[ -x "${PREFIX}/bin/mazelclaw" ]]; then
+    version="$("${PREFIX}/bin/mazelclaw" --version 2>/dev/null | head -n 1 | tr -d '\r')"
   fi
   echo "$version"
 }
@@ -531,7 +531,7 @@ try {
 }
 
 refresh_gateway_service_if_loaded() {
-  local claw="${PREFIX}/bin/openclaw"
+  local claw="${PREFIX}/bin/mazelclaw"
   if [[ ! -x "$claw" ]]; then
     return 0
   fi
@@ -591,14 +591,14 @@ main() {
   installed_version="$(resolve_openclaw_version)"
   if [[ -n "$installed_version" ]]; then
     emit_json "{\"event\":\"done\",\"ok\":true,\"version\":\"${installed_version//\"/\\\"}\"}"
-    log "OpenClaw installed (${installed_version})."
+    log "MazelClaw installed (${installed_version})."
   else
     emit_json "{\"event\":\"done\",\"ok\":true}"
-    log "OpenClaw installed."
+    log "MazelClaw installed."
   fi
 
   if [[ "$RUN_ONBOARD" -eq 1 ]]; then
-    "${PREFIX}/bin/openclaw" onboard
+    "${PREFIX}/bin/mazelclaw" onboard
   fi
 }
 

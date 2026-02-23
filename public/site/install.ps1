@@ -1,6 +1,6 @@
-# OpenClaw Installer for Windows
-# Usage: iwr -useb https://openclaw.ai/install.ps1 | iex
-#        & ([scriptblock]::Create((iwr -useb https://openclaw.ai/install.ps1))) -Tag beta -NoOnboard -DryRun
+# MazelClaw Installer for Windows
+# Usage: iwr -useb https://mazelclaw.ai/install.ps1 | iex
+#        & ([scriptblock]::Create((iwr -useb https://mazelclaw.ai/install.ps1))) -Tag beta -NoOnboard -DryRun
 
 param(
     [string]$Tag = "latest",
@@ -15,7 +15,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 Write-Host ""
-Write-Host "  OpenClaw Installer" -ForegroundColor Cyan
+Write-Host "  MazelClaw Installer" -ForegroundColor Cyan
 Write-Host ""
 
 # Check if running in PowerShell
@@ -54,7 +54,7 @@ if (-not $PSBoundParameters.ContainsKey("DryRun")) {
 
 if ([string]::IsNullOrWhiteSpace($GitDir)) {
     $userHome = [Environment]::GetFolderPath("UserProfile")
-    $GitDir = (Join-Path $userHome "openclaw")
+    $GitDir = (Join-Path $userHome "mazelclaw")
 }
 
 # Check for Node.js
@@ -123,11 +123,11 @@ function Install-Node {
     exit 1
 }
 
-# Check for existing OpenClaw installation
+# Check for existing MazelClaw installation
 function Check-ExistingOpenClaw {
     try {
-        $null = Get-Command openclaw -ErrorAction Stop
-    Write-Host "[*] Existing OpenClaw installation detected" -ForegroundColor Yellow
+        $null = Get-Command mazelclaw -ErrorAction Stop
+    Write-Host "[*] Existing MazelClaw installation detected" -ForegroundColor Yellow
     return $true
     } catch {
         return $false
@@ -154,7 +154,7 @@ function Require-Git {
 }
 
 function Ensure-OpenClawOnPath {
-    if (Get-Command openclaw -ErrorAction SilentlyContinue) {
+    if (Get-Command mazelclaw -ErrorAction SilentlyContinue) {
         return $true
     }
 
@@ -173,12 +173,12 @@ function Ensure-OpenClawOnPath {
             $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
             Write-Host "[!] Added $npmBin to user PATH (restart terminal if command not found)" -ForegroundColor Yellow
         }
-        if (Test-Path (Join-Path $npmBin "openclaw.cmd")) {
+        if (Test-Path (Join-Path $npmBin "mazelclaw.cmd")) {
             return $true
         }
     }
 
-    Write-Host "[!] openclaw is not on PATH yet." -ForegroundColor Yellow
+    Write-Host "[!] mazelclaw is not on PATH yet." -ForegroundColor Yellow
     Write-Host "Restart PowerShell or add the npm global bin folder to PATH." -ForegroundColor Yellow
     if ($npmPrefix) {
         Write-Host "Expected path: $npmPrefix\\bin" -ForegroundColor Cyan
@@ -209,17 +209,17 @@ function Ensure-Pnpm {
     Write-Host "[OK] pnpm installed" -ForegroundColor Green
 }
 
-# Install OpenClaw
-function Install-OpenClaw {
+# Install MazelClaw
+function Install-MazelClaw {
     if ([string]::IsNullOrWhiteSpace($Tag)) {
         $Tag = "latest"
     }
-    # Use openclaw package for beta, openclaw for stable
-    $packageName = "openclaw"
+    # Use mazelclaw package for beta, mazelclaw for stable
+    $packageName = "mazelclaw"
     if ($Tag -eq "beta" -or $Tag -match "^beta\.") {
-        $packageName = "openclaw"
+        $packageName = "mazelclaw"
     }
-    Write-Host "[*] Installing OpenClaw ($packageName@$Tag)..." -ForegroundColor Yellow
+    Write-Host "[*] Installing MazelClaw ($packageName@$Tag)..." -ForegroundColor Yellow
     $prevLogLevel = $env:NPM_CONFIG_LOGLEVEL
     $prevUpdateNotifier = $env:NPM_CONFIG_UPDATE_NOTIFIER
     $prevFund = $env:NPM_CONFIG_FUND
@@ -238,7 +238,7 @@ function Install-OpenClaw {
                 Write-Host "  https://git-scm.com/download/win" -ForegroundColor Cyan
             } else {
                 Write-Host "Re-run with verbose output to see the full error:" -ForegroundColor Yellow
-                Write-Host "  iwr -useb https://openclaw.ai/install.ps1 | iex" -ForegroundColor Cyan
+                Write-Host "  iwr -useb https://mazelclaw.ai/install.ps1 | iex" -ForegroundColor Cyan
             }
             $npmOutput | ForEach-Object { Write-Host $_ }
             exit 1
@@ -249,10 +249,10 @@ function Install-OpenClaw {
         $env:NPM_CONFIG_FUND = $prevFund
         $env:NPM_CONFIG_AUDIT = $prevAudit
     }
-    Write-Host "[OK] OpenClaw installed" -ForegroundColor Green
+    Write-Host "[OK] MazelClaw installed" -ForegroundColor Green
 }
 
-# Install OpenClaw from GitHub
+# Install MazelClaw from GitHub
 function Install-OpenClawFromGit {
     param(
         [string]$RepoDir,
@@ -261,8 +261,8 @@ function Install-OpenClawFromGit {
     Require-Git
     Ensure-Pnpm
 
-    $repoUrl = "https://github.com/openclaw/openclaw.git"
-    Write-Host "[*] Installing OpenClaw from GitHub ($repoUrl)..." -ForegroundColor Yellow
+    $repoUrl = "https://github.com/TalmudTech/mazelclaw.git"
+    Write-Host "[*] Installing MazelClaw from GitHub ($repoUrl)..." -ForegroundColor Yellow
 
     if (-not (Test-Path $RepoDir)) {
         git clone $repoUrl $RepoDir
@@ -290,7 +290,7 @@ function Install-OpenClawFromGit {
     if (-not (Test-Path $binDir)) {
         New-Item -ItemType Directory -Force -Path $binDir | Out-Null
     }
-    $cmdPath = Join-Path $binDir "openclaw.cmd"
+    $cmdPath = Join-Path $binDir "mazelclaw.cmd"
     $cmdContents = "@echo off`r`nnode ""$RepoDir\\dist\\entry.js"" %*`r`n"
     Set-Content -Path $cmdPath -Value $cmdContents -NoNewline
 
@@ -301,7 +301,7 @@ function Install-OpenClawFromGit {
         Write-Host "[!] Added $binDir to user PATH (restart terminal if command not found)" -ForegroundColor Yellow
     }
 
-    Write-Host "[OK] OpenClaw wrapper installed to $cmdPath" -ForegroundColor Green
+    Write-Host "[OK] MazelClaw wrapper installed to $cmdPath" -ForegroundColor Green
     Write-Host "[i] This checkout uses pnpm. For deps, run: pnpm install (avoid npm install in the repo)." -ForegroundColor Gray
 }
 
@@ -309,7 +309,7 @@ function Install-OpenClawFromGit {
 function Run-Doctor {
     Write-Host "[*] Running doctor to migrate settings..." -ForegroundColor Yellow
     try {
-        openclaw doctor --non-interactive
+        mazelclaw doctor --non-interactive
     } catch {
         # Ignore errors from doctor
     }
@@ -318,7 +318,7 @@ function Run-Doctor {
 
 function Test-GatewayServiceLoaded {
     try {
-        $statusJson = (openclaw daemon status --json 2>$null)
+        $statusJson = (mazelclaw daemon status --json 2>$null)
         if ([string]::IsNullOrWhiteSpace($statusJson)) {
             return $false
         }
@@ -333,7 +333,7 @@ function Test-GatewayServiceLoaded {
 }
 
 function Refresh-GatewayServiceIfLoaded {
-    if (-not (Get-Command openclaw -ErrorAction SilentlyContinue)) {
+    if (-not (Get-Command mazelclaw -ErrorAction SilentlyContinue)) {
         return
     }
     if (-not (Test-GatewayServiceLoaded)) {
@@ -342,15 +342,15 @@ function Refresh-GatewayServiceIfLoaded {
 
     Write-Host "[*] Refreshing loaded gateway service..." -ForegroundColor Yellow
     try {
-        openclaw gateway install --force | Out-Null
+        mazelclaw gateway install --force | Out-Null
     } catch {
         Write-Host "[!] Gateway service refresh failed; continuing." -ForegroundColor Yellow
         return
     }
 
     try {
-        openclaw gateway restart | Out-Null
-        openclaw gateway status --probe --json | Out-Null
+        mazelclaw gateway restart | Out-Null
+        mazelclaw gateway status --probe --json | Out-Null
         Write-Host "[OK] Gateway service refreshed" -ForegroundColor Green
     } catch {
         Write-Host "[!] Gateway service restart failed; continuing." -ForegroundColor Yellow
@@ -362,7 +362,7 @@ function Get-LegacyRepoDir {
         return $env:OPENCLAW_GIT_DIR
     }
     $userHome = [Environment]::GetFolderPath("UserProfile")
-    return (Join-Path $userHome "openclaw")
+    return (Join-Path $userHome "mazelclaw")
 }
 
 function Remove-LegacySubmodule {
@@ -423,17 +423,17 @@ function Main {
 
     $finalGitDir = $null
 
-    # Step 2: OpenClaw
+    # Step 2: MazelClaw
     if ($InstallMethod -eq "git") {
         $finalGitDir = $GitDir
         Install-OpenClawFromGit -RepoDir $GitDir -SkipUpdate:$NoGitUpdate
     } else {
-        Install-OpenClaw
+        Install-MazelClaw
     }
 
     if (-not (Ensure-OpenClawOnPath)) {
-        Write-Host "Install completed, but OpenClaw is not on PATH yet." -ForegroundColor Yellow
-        Write-Host "Open a new terminal, then run: openclaw doctor" -ForegroundColor Cyan
+        Write-Host "Install completed, but MazelClaw is not on PATH yet." -ForegroundColor Yellow
+        Write-Host "Open a new terminal, then run: mazelclaw doctor" -ForegroundColor Cyan
         return
     }
 
@@ -446,15 +446,15 @@ function Main {
 
     $installedVersion = $null
     try {
-        $installedVersion = (openclaw --version 2>$null).Trim()
+        $installedVersion = (mazelclaw --version 2>$null).Trim()
     } catch {
         $installedVersion = $null
     }
     if (-not $installedVersion) {
         try {
             $npmList = npm list -g --depth 0 --json 2>$null | ConvertFrom-Json
-            if ($npmList -and $npmList.dependencies -and $npmList.dependencies.openclaw -and $npmList.dependencies.openclaw.version) {
-                $installedVersion = $npmList.dependencies.openclaw.version
+            if ($npmList -and $npmList.dependencies -and $npmList.dependencies.mazelclaw -and $npmList.dependencies.mazelclaw.version) {
+                $installedVersion = $npmList.dependencies.mazelclaw.version
             }
         } catch {
             $installedVersion = $null
@@ -463,9 +463,9 @@ function Main {
 
     Write-Host ""
     if ($installedVersion) {
-        Write-Host "OpenClaw installed successfully ($installedVersion)!" -ForegroundColor Green
+        Write-Host "MazelClaw installed successfully ($installedVersion)!" -ForegroundColor Green
     } else {
-        Write-Host "OpenClaw installed successfully!" -ForegroundColor Green
+        Write-Host "MazelClaw installed successfully!" -ForegroundColor Green
     }
     Write-Host ""
     if ($isUpgrade) {
@@ -512,23 +512,23 @@ function Main {
 
     if ($InstallMethod -eq "git") {
         Write-Host "Source checkout: $finalGitDir" -ForegroundColor Cyan
-        Write-Host "Wrapper: $env:USERPROFILE\\.local\\bin\\openclaw.cmd" -ForegroundColor Cyan
+        Write-Host "Wrapper: $env:USERPROFILE\\.local\\bin\\mazelclaw.cmd" -ForegroundColor Cyan
         Write-Host ""
     }
 
     if ($isUpgrade) {
         Write-Host "Upgrade complete. Run " -NoNewline
-        Write-Host "openclaw doctor" -ForegroundColor Cyan -NoNewline
+        Write-Host "mazelclaw doctor" -ForegroundColor Cyan -NoNewline
         Write-Host " to check for additional migrations."
     } else {
         if ($NoOnboard) {
             Write-Host "Skipping onboard (requested). Run " -NoNewline
-            Write-Host "openclaw onboard" -ForegroundColor Cyan -NoNewline
+            Write-Host "mazelclaw onboard" -ForegroundColor Cyan -NoNewline
             Write-Host " later."
         } else {
             Write-Host "Starting setup..." -ForegroundColor Cyan
             Write-Host ""
-            openclaw onboard
+            mazelclaw onboard
         }
     }
 }
