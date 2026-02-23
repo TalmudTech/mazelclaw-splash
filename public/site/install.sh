@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # MazelClaw Installer for macOS and Linux
-# Usage: curl -fsSL --proto '=https' --tlsv1.2 https://mazelclaw.ai/install.sh | bash
+# Usage: curl -fsSL --proto '=https' --tlsv1.2 https://mazelclaw.com/install.sh | bash
 
 BOLD='\033[1m'
 ACCENT='\033[38;2;255;77;77m'       # coral-bright  #3b82f6
@@ -258,7 +258,7 @@ detect_os_or_die() {
     if [[ "$OS" == "unknown" ]]; then
         ui_error "Unsupported operating system"
         echo "This installer supports macOS and Linux (including WSL)."
-        echo "For Windows, use: iwr -useb https://mazelclaw.ai/install.ps1 | iex"
+        echo "For Windows, use: iwr -useb https://mazelclaw.com/install.ps1 | iex"
         exit 1
     fi
 
@@ -370,7 +370,7 @@ show_install_plan() {
 }
 
 show_footer_links() {
-    local faq_url="https://docs.mazelclaw.ai/start/faq"
+    local faq_url="https://docs.mazelclaw.com/start/faq"
     if [[ -n "$GUM" ]]; then
         local content
         content="$(printf '%s\n%s' "Need help?" "FAQ: ${faq_url}")"
@@ -967,7 +967,7 @@ print_usage() {
 MazelClaw installer (macOS + Linux)
 
 Usage:
-  curl -fsSL --proto '=https' --tlsv1.2 https://mazelclaw.ai/install.sh | bash -s -- [options]
+  curl -fsSL --proto '=https' --tlsv1.2 https://mazelclaw.com/install.sh | bash -s -- [options]
 
 Options:
   --install-method, --method npm|git   Install via npm (default) or from a git checkout
@@ -997,9 +997,9 @@ Environment variables:
   SHARP_IGNORE_GLOBAL_LIBVIPS=0|1    Default: 1 (avoid sharp building against global libvips)
 
 Examples:
-  curl -fsSL --proto '=https' --tlsv1.2 https://mazelclaw.ai/install.sh | bash
-  curl -fsSL --proto '=https' --tlsv1.2 https://mazelclaw.ai/install.sh | bash -s -- --no-onboard
-  curl -fsSL --proto '=https' --tlsv1.2 https://mazelclaw.ai/install.sh | bash -s -- --install-method git --no-onboard
+  curl -fsSL --proto '=https' --tlsv1.2 https://mazelclaw.com/install.sh | bash
+  curl -fsSL --proto '=https' --tlsv1.2 https://mazelclaw.com/install.sh | bash -s -- --no-onboard
+  curl -fsSL --proto '=https' --tlsv1.2 https://mazelclaw.com/install.sh | bash -s -- --install-method git --no-onboard
 EOF
 }
 
@@ -1187,7 +1187,7 @@ print_homebrew_admin_fix() {
     echo "  2) Ask an Administrator to grant admin rights, then sign out/in:"
     echo "     sudo dseditgroup -o edit -a ${current_user} -t user admin"
     echo "Then retry:"
-    echo "  curl -fsSL https://mazelclaw.ai/install.sh | bash"
+    echo "  curl -fsSL https://mazelclaw.com/install.sh | bash"
 }
 
 install_homebrew() {
@@ -2233,7 +2233,7 @@ main() {
         ui_kv "Checkout" "$final_git_dir"
         ui_kv "Wrapper" "$HOME/.local/bin/mazelclaw"
         ui_kv "Update command" "mazelclaw update --restart"
-        ui_kv "Switch to npm" "curl -fsSL --proto '=https' --tlsv1.2 https://mazelclaw.ai/install.sh | bash -s -- --install-method npm"
+        ui_kv "Switch to npm" "curl -fsSL --proto '=https' --tlsv1.2 https://mazelclaw.com/install.sh | bash -s -- --install-method npm"
     elif [[ "$is_upgrade" == "true" ]]; then
         ui_info "Upgrade complete"
         if [[ -r /dev/tty && -w /dev/tty ]]; then

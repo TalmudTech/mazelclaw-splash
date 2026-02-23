@@ -3,7 +3,7 @@ setlocal enabledelayedexpansion
 
 REM MazelClaw Windows CMD installer
 REM Usage:
-REM   curl -fsSL https://mazelclaw.ai/install.cmd -o install.cmd && install.cmd --no-onboard && del install.cmd
+REM   curl -fsSL https://mazelclaw.com/install.cmd -o install.cmd && install.cmd --no-onboard && del install.cmd
 
 set "TAG=latest"
 set "INSTALL_METHOD=npm"
@@ -63,7 +63,7 @@ if %ERRORLEVEL% neq 0 (
 set "TMP=%TEMP%\mazelclaw-install.ps1"
 REM TMP may include spaces; always quote "%TMP%" when used.
 if not "%MAZELCLAW_INSTALL_PS1_URL%"=="" set "INSTALL_PS1_URL=%MAZELCLAW_INSTALL_PS1_URL%"
-if "%INSTALL_PS1_URL%"=="" set "INSTALL_PS1_URL=https://mazelclaw.ai/install.ps1"
+if "%INSTALL_PS1_URL%"=="" set "INSTALL_PS1_URL=https://mazelclaw.com/install.ps1"
 
 if exist "%INSTALL_PS1_URL%" (
   copy /Y "%INSTALL_PS1_URL%" "%TMP%" >nul

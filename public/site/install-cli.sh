@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # MazelClaw CLI installer (non-interactive, no onboarding)
-# Usage: curl -fsSL --proto '=https' --tlsv1.2 https://mazelclaw.ai/install-cli.sh | bash -s -- [--json] [--prefix <path>] [--version <ver>] [--node-version <ver>] [--onboard]
+# Usage: curl -fsSL --proto '=https' --tlsv1.2 https://mazelclaw.com/install-cli.sh | bash -s -- [--json] [--prefix <path>] [--version <ver>] [--node-version <ver>] [--onboard]
 
 PREFIX="${MAZELCLAW_PREFIX:-${HOME}/.mazelclaw}"
 MAZELCLAW_VERSION="${MAZELCLAW_VERSION:-latest}"

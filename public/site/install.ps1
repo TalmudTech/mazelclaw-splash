@@ -1,6 +1,6 @@
 # MazelClaw Installer for Windows
-# Usage: iwr -useb https://mazelclaw.ai/install.ps1 | iex
-#        & ([scriptblock]::Create((iwr -useb https://mazelclaw.ai/install.ps1))) -Tag beta -NoOnboard -DryRun
+# Usage: iwr -useb https://mazelclaw.com/install.ps1 | iex
+#        & ([scriptblock]::Create((iwr -useb https://mazelclaw.com/install.ps1))) -Tag beta -NoOnboard -DryRun
 
 param(
     [string]$Tag = "latest",
@@ -238,7 +238,7 @@ function Install-MazelClaw {
                 Write-Host "  https://git-scm.com/download/win" -ForegroundColor Cyan
             } else {
                 Write-Host "Re-run with verbose output to see the full error:" -ForegroundColor Yellow
-                Write-Host "  iwr -useb https://mazelclaw.ai/install.ps1 | iex" -ForegroundColor Cyan
+                Write-Host "  iwr -useb https://mazelclaw.com/install.ps1 | iex" -ForegroundColor Cyan
             }
             $npmOutput | ForEach-Object { Write-Host $_ }
             exit 1
